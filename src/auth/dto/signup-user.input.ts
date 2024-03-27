@@ -1,7 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 @InputType()
-export class SigninUserInput {
+export class SignupUserInput {
   @Field()
   @IsString()
   @IsEmail()
@@ -14,4 +20,11 @@ export class SigninUserInput {
     message: 'password is too weak',
   })
   password: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  fullName?: string;
+
+  @Field({ nullable: true })
+  phoneNumber: string;
 }

@@ -9,21 +9,21 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
 
 @Resolver(() => Product)
-@UseGuards(JwtAuthGuard)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 
   @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
-    @CurrentUser() user: any,
+    @CurrentUser() user: User,
   ): Promise<Product> {
     return this.productService.createProduct(createProductInput, user);
   }
 
   @Query(() => [Product])
-  @UseGuards(JwtAuthGuard)
   async getAllProducts(@CurrentUser() user: User): Promise<Product[]> {
+    console.log('Current User:', user);
     return this.productService.getAllProducts(user);
   }
   @Query(() => Product)
@@ -34,6 +34,7 @@ export class ProductResolver {
     return this.productService.getProduct(id, user);
   }
   @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async updateProduct(
     @CurrentUser() user: User,
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
@@ -41,6 +42,7 @@ export class ProductResolver {
     return this.productService.updateProductStatus(updateProductInput, user);
   }
   @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async deleteProduct(
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,

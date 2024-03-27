@@ -7,7 +7,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
-// import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -22,8 +21,6 @@ import { JwtStrategy } from './strategy/jwt.strategy';
           expiresIn: '1h',
         },
         secret: `Todo-Protect Me`,
-        // secret: process.env.JWT_SECRET,
-        // secret: configService.get('JWT_SECRET'),
       }),
     }),
   ],

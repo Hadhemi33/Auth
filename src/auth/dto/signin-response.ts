@@ -7,4 +7,8 @@ export class SigninResponse {
 
   @Field()
   username: string;
+  @Field()
+  fullName: string;
+  @Field()
+  phoneNumber: string;
 }

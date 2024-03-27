@@ -10,37 +10,53 @@ import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { ProductStatus } from './product-status.enum';
 import { User } from 'src/user/entities/user.entity';
-import { CurrentUser } from 'src/auth/get-current-user.decorator';
+
+import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
   ) {}
 
-  // create(createProductInput: CreateProductInput) {
-  //   return 'This action adds a new product';
-  // }
   async getAllProducts(user): Promise<Product[]> {
-    const products = await this.productRepository.find({ where: { user } });
+    const products = await this.productRepository.find({
+      where: { user },
+      relations: ['user', 'category'],
+    });
     if (!products) {
       throw new InternalServerErrorException();
     }
     return products;
   }
+
   async createProduct(
     createProductInput: CreateProductInput,
     user: any,
   ): Promise<Product> {
-    const { title, description } = createProductInput;
+    const { title, description, price, category } = createProductInput;
+
+    const categoryFound = await this.categoryRepository.findOne({
+      where: { id: category },
+    });
+
+    if (!categoryFound) {
+      throw new NotFoundException(`Category with ID ${category} not found`);
+    }
+
     const newProduct = this.productRepository.create({
       title,
       description,
+      price,
       status: ProductStatus.InStock,
       createdAt: new Date().toISOString(),
       user,
+      category: { id: category, name: categoryFound.name },
     });
+
     try {
       await this.productRepository.save(newProduct);
       return newProduct;
@@ -63,12 +79,15 @@ export class ProductService {
     user: User,
   ): Promise<Product> {
     const product = await this.getProduct(updateProductInput.id, user);
-    const { title, description, status } = updateProductInput;
+    const { title, description, status, price } = updateProductInput;
     if (title) {
       product.title = title;
     }
     if (description) {
       product.description = description;
+    }
+    if (price) {
+      product.price = price;
     }
     if (status) {
       product.status = status;
@@ -91,20 +110,4 @@ export class ProductService {
     result.id = removedProductId;
     return result;
   }
-
-  // findAll() {
-  //   return `This action returns all product`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} product`;
-  // }
-
-  // update(id: number, updateProductInput: UpdateProductInput) {
-  //   return `This action updates a #${id} product`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} product`;
-  // }
 }

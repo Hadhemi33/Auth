@@ -6,6 +6,14 @@ type User {
   id: ID!
   username: String!
   password: String!
+  fullName: String!
+  phoneNumber: String!
+  products: [Product!]!
+}
+
+type Category {
+  id: ID!
+  name: String!
   products: [Product!]!
 }
 
@@ -13,46 +21,84 @@ type Product {
   id: ID!
   title: String!
   description: String!
+  price: String!
   status: String!
   createdAt: String!
   user: User!
+  category: Category!
 }
 
 type SignupResponse {
+  id: ID!
   username: String!
+  fullName: String
+  phoneNumber: String
 }
 
 type SigninResponse {
   access_token: String!
   username: String!
+  fullName: String!
+  phoneNumber: String!
 }
 
 type Query {
   getAllProducts: [Product!]!
   getProduct(id: String!): Product!
+  getCategoryById(id: String!): Category!
+  getAllCategories: [Category!]!
 }
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
-  signup(loginUserInput: SigninUserInput!): SignupResponse!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
 }
 
 input CreateProductInput {
   title: String!
+  price: String!
   description: String!
+  category: ID!
 }
 
 input UpdateProductInput {
   id: ID!
   title: String
   description: String!
+  price: String!
   status: String!
+}
+
+input UpdateUserInput {
+  id: ID!
+  fullName: String
+  username: String
+  password: String
+  phoneNumber: String
+}
+
+input SignupUserInput {
+  username: String!
+  password: String!
+  fullName: String
+  phoneNumber: String
 }
 
 input SigninUserInput {
   username: String!
   password: String!
+}
+
+input CreateCategoryInput {
+  name: String!
+}
+
+input UpdateCategoryInput {
+  name: String
 }

@@ -1,8 +1,15 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ProductStatus } from '../product-status.enum';
 import { User } from 'src/user/entities/user.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { Order } from 'src/order/entities/order.entity'; // Import Order entity
 
 @Entity()
 @ObjectType('Product')
@@ -18,6 +25,7 @@ export class Product {
   @Column()
   @Field()
   description: string;
+
   @Column()
   @Field()
   price: string;
@@ -34,7 +42,11 @@ export class Product {
   @Field(() => User)
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  @Field(() => Category)
-  category: Category;
+  @ManyToOne(() => Order, (order) => order.products)
+  @Field(() => Order)
+  order: Order;
+  
+  @OneToMany(() => Category, (category) => category.product)
+  @Field(() => [Category])
+  categories: Category[];
 }

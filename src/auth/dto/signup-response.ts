@@ -4,7 +4,7 @@ import { IsOptional, IsUUID } from 'class-validator';
 @ObjectType()
 export class SignupResponse {
   @Field(() => ID)
-  // @IsUUID('4', { each: true })
+
   id: string;
   @Field()
   username: string;

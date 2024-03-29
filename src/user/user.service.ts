@@ -23,7 +23,7 @@ export class UserService {
       where: [{ username }],
     });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User n found');
     }
     return user;
   }
@@ -32,7 +32,7 @@ export class UserService {
       where: [{ fullName }],
     });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User nott found');
     }
     return user;
   }
@@ -41,7 +41,7 @@ export class UserService {
       where: [{ phoneNumber }],
     });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User no found');
     }
     return user;
   }
@@ -77,10 +77,11 @@ export class UserService {
       where: [{ username }],
     });
     if (!user) {
-      throw new NotFoundException(`User ${username} not found.`);
+      throw new NotFoundException(`Useer ${username} not found.`);
     }
     return user;
   }
+
   async updateUserProfile(updateUserInput: UpdateUserInput): Promise<User> {
     const user = await this.getUser(updateUserInput.id);
     const { username, fullName, phoneNumber } = updateUserInput;

@@ -7,12 +7,16 @@ import { User } from 'src/user/entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
+import { Roles } from 'src/auth/role.decorator';
+import { RolesAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @Resolver(() => Product)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 
   @Mutation(() => Product)
+  // @Roles('ADMIN')
+  // @UseGuards(RolesAuthGuard)
   @UseGuards(JwtAuthGuard)
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,

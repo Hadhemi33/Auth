@@ -10,6 +10,6 @@ export class CreateProductInput {
   price?: string;
   @Field()
   description: string;
-  @Field(() => ID) // Assuming category will be identified by ID
+  @Field(() => ID)  
   category: string;
 }

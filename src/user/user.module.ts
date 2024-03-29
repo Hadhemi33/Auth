@@ -4,9 +4,15 @@ import { UserResolver } from './user.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
+import { Category } from 'src/category/entities/category.entity';
+import { Order } from 'src/order/entities/order.entity';
+import { Product } from 'src/product/entities/product.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule)],
+  imports: [
+    TypeOrmModule.forFeature([User, Category, Order, Product]),
+    forwardRef(() => AuthModule),
+  ],
   providers: [UserService, UserResolver],
   exports: [UserService],
 })

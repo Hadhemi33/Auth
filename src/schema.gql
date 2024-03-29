@@ -2,6 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Category {
+  id: ID!
+  name: String!
+  user: User!
+  product: Product!
+}
+
+type Order {
+  id: ID!
+  createdAt: String!
+  totalPrice: String!
+  user: User!
+  products: [Product!]!
+}
+
 type User {
   id: ID!
   username: String!
@@ -9,12 +24,8 @@ type User {
   fullName: String!
   phoneNumber: String!
   products: [Product!]!
-}
-
-type Category {
-  id: ID!
-  name: String!
-  products: [Product!]!
+  orders: [Order!]!
+  categories: [Category!]!
 }
 
 type Product {
@@ -25,7 +36,8 @@ type Product {
   status: String!
   createdAt: String!
   user: User!
-  category: Category!
+  order: Order!
+  categories: [Category!]!
 }
 
 type SignupResponse {
@@ -47,17 +59,21 @@ type Query {
   getProduct(id: String!): Product!
   getCategoryById(id: String!): Category!
   getAllCategories: [Category!]!
+  orders: [Order!]!
+  order(id: String!): Order!
 }
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
-  updateUser(updateUserInput: UpdateUserInput!): User!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
-  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  createCategory(createCategoryInput: CreateCategoryInput!, username: String!): Category!
   updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
+  createOrder(order: CreateOrderDto!): Order!
+  updateOrder(id: String!, order: UpdateOrderDto!): Order!
+  deleteOrder(id: String!): Boolean!
 }
 
 input CreateProductInput {
@@ -73,14 +89,6 @@ input UpdateProductInput {
   description: String!
   price: String!
   status: String!
-}
-
-input UpdateUserInput {
-  id: ID!
-  fullName: String
-  username: String
-  password: String
-  phoneNumber: String
 }
 
 input SignupUserInput {
@@ -101,4 +109,16 @@ input CreateCategoryInput {
 
 input UpdateCategoryInput {
   name: String
+}
+
+input CreateOrderDto {
+  totalPrice: String!
+  userId: String!
+  productIds: [String!]!
+}
+
+input UpdateOrderDto {
+  totalPrice: String
+  userId: String
+  productIds: [String!]
 }

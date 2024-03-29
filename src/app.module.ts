@@ -9,12 +9,13 @@ import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      // playground: true,
+   
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req }) => ({ req }),
     }),
@@ -24,17 +25,18 @@ import { CategoryModule } from './category/category.module';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'bidflick',
+      database: 'app',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
 
-      // logging: true,
+ 
     }),
     ProductModule,
     UserModule,
     AuthModule,
     CategoryModule,
+    OrderModule,
   ],
 
   controllers: [AppController],

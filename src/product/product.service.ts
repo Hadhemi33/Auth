@@ -54,7 +54,8 @@ export class ProductService {
       status: ProductStatus.InStock,
       createdAt: new Date().toISOString(),
       user,
-      category: { id: category, name: categoryFound.name },
+      order: null,
+      categories: [categoryFound],
     });
 
     try {
@@ -74,6 +75,7 @@ export class ProductService {
     }
     return productFound;
   }
+  
   async updateProductStatus(
     updateProductInput: UpdateProductInput,
     user: User,

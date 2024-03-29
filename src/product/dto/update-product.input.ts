@@ -6,7 +6,6 @@ import { ProductStatus } from '../product-status.enum';
 @InputType()
 export class UpdateProductInput {
   @Field(() => ID)
-  // @IsUUID('4', { each: true })
   id: string;
   @Field({ nullable: true })
   @Length(3, 100)

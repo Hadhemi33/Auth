@@ -7,12 +7,12 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 
 @Resolver(() => User)
 export class UserResolver {
-  // constructor(private userService: UserService) {}
-  // @Mutation(() => User)
-  // async updateUser(
-  //   @CurrentUser() user: User,
-  //   @Args('updateUserInput') updateUserInput: UpdateUserInput,
-  // ): Promise<User> {
-  //   return this.userService.updateUserProfile(updateUserInput);
-  // }
+  constructor(private userService: UserService) {}
+  @Mutation(() => User)
+  async updateUser(
+    @CurrentUser() user: User,
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    return this.userService.updateUserProfile(updateUserInput);
+  }
 }

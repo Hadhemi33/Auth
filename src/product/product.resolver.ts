@@ -4,20 +4,20 @@ import { Product } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { User } from 'src/user/entities/user.entity';
-import { UseGuards } from '@nestjs/common';
+import { SetMetadata, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
-import { Roles } from 'src/auth/role.decorator';
-import { RolesAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+
 
 @Resolver(() => Product)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 
   @Mutation(() => Product)
-  // @Roles('ADMIN')
-  // @UseGuards(RolesAuthGuard)
   @UseGuards(JwtAuthGuard)
+  @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['admin'])
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
     @CurrentUser() user: User,

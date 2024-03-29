@@ -2,6 +2,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -9,8 +10,7 @@ import {
 import { ProductStatus } from '../product-status.enum';
 import { User } from 'src/user/entities/user.entity';
 import { Category } from 'src/category/entities/category.entity';
-import { Order } from 'src/order/entities/order.entity'; // Import Order entity
-
+import { Order } from 'src/order/entities/order.entity'; 
 @Entity()
 @ObjectType('Product')
 export class Product {
@@ -45,8 +45,8 @@ export class Product {
   @ManyToOne(() => Order, (order) => order.products)
   @Field(() => Order)
   order: Order;
-  
-  @OneToMany(() => Category, (category) => category.product)
-  @Field(() => [Category])
+
+
+  @ManyToMany(() => Category, (category) => category.products)
   categories: Category[];
 }

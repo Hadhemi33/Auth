@@ -25,7 +25,7 @@ export class ProductService {
   async getAllProducts(user): Promise<Product[]> {
     const products = await this.productRepository.find({
       where: { user },
-      relations: ['user', 'category'],
+      relations: ['user', 'categories'],
     });
     if (!products) {
       throw new InternalServerErrorException();
@@ -37,16 +37,9 @@ export class ProductService {
     createProductInput: CreateProductInput,
     user: any,
   ): Promise<Product> {
-    const { title, description, price, category } = createProductInput;
+    const { title, description, price } = createProductInput;
 
-    const categoryFound = await this.categoryRepository.findOne({
-      where: { id: category },
-    });
-
-    if (!categoryFound) {
-      throw new NotFoundException(`Category with ID ${category} not found`);
-    }
-
+ 
     const newProduct = this.productRepository.create({
       title,
       description,
@@ -55,7 +48,8 @@ export class ProductService {
       createdAt: new Date().toISOString(),
       user,
       order: null,
-      categories: [categoryFound],
+
+      categories: [],
     });
 
     try {
@@ -75,7 +69,7 @@ export class ProductService {
     }
     return productFound;
   }
-  
+
   async updateProductStatus(
     updateProductInput: UpdateProductInput,
     user: User,

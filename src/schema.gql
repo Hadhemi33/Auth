@@ -6,7 +6,6 @@ type Category {
   id: ID!
   name: String!
   user: User!
-  product: Product!
 }
 
 type Order {
@@ -37,7 +36,6 @@ type Product {
   createdAt: String!
   user: User!
   order: Order!
-  categories: [Category!]!
 }
 
 type SignupResponse {
@@ -67,6 +65,7 @@ type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
+  updateUser(updateUserInput: UpdateUserInput!): User!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
   createCategory(createCategoryInput: CreateCategoryInput!, username: String!): Category!
@@ -80,7 +79,7 @@ input CreateProductInput {
   title: String!
   price: String!
   description: String!
-  category: ID!
+  categories: [ID!]!
 }
 
 input UpdateProductInput {
@@ -89,6 +88,14 @@ input UpdateProductInput {
   description: String!
   price: String!
   status: String!
+}
+
+input UpdateUserInput {
+  id: ID!
+  fullName: String
+  username: String
+  password: String
+  phoneNumber: String
 }
 
 input SignupUserInput {

@@ -5,6 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -25,7 +26,7 @@ export class Category {
   @Field(() => User)
   user: User;
 
-  @ManyToOne(() => Product, (product) => product.categories)
-  @Field(() => Product)
-  product: Product;
+
+  @ManyToMany(() => Product, (product) => product.categories)
+  products: Product[];
 }

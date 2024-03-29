@@ -1,5 +1,6 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
 import { Length } from 'class-validator';
+import { Category } from 'src/category/entities/category.entity';
 
 @InputType()
 export class CreateProductInput {
@@ -10,6 +11,7 @@ export class CreateProductInput {
   price?: string;
   @Field()
   description: string;
-  @Field(() => ID)  
-  category: string;
+
+  @Field(() => [ID]) 
+  categories: string[];
 }

@@ -15,7 +15,7 @@ import { OrderModule } from './order/order.module';
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-   
+
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req }) => ({ req }),
     }),
@@ -29,8 +29,6 @@ import { OrderModule } from './order/order.module';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
-
- 
     }),
     ProductModule,
     UserModule,

@@ -55,6 +55,11 @@ type SigninResponse {
 type Query {
   getAllProducts: [Product!]!
   getProduct(id: String!): Product!
+  getUser(id: String!): User!
+  getUserById(id: String!): User!
+  getUserByEmail(email: String!): User!
+  getUserByFullName(fullName: String!): User!
+  getUserByPhoneNumber(phoneNumber: String!): User!
   getCategoryById(id: String!): Category!
   getAllCategories: [Category!]!
   orders: [Order!]!
@@ -68,7 +73,7 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
-  createCategory(createCategoryInput: CreateCategoryInput!, username: String!): Category!
+  createCategory(createCategoryInput: CreateCategoryInput!, id: String!): Category!
   updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
   createOrder(order: CreateOrderDto!): Order!
   updateOrder(id: String!, order: UpdateOrderDto!): Order!

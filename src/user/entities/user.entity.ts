@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { Category } from 'src/category/entities/category.entity';
 import { Order } from 'src/order/entities/order.entity';
 
@@ -7,7 +8,7 @@ import {
   Column,
   Entity,
   OneToMany,
-  OneToOne,
+
   PrimaryGeneratedColumn,
 } from 'typeorm';
 @Entity()
@@ -44,4 +45,5 @@ export class User {
   @OneToMany(() => Category, (category) => category.user)
   @Field(() => [Category])
   categories: Category[];
+
 }

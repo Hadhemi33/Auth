@@ -18,8 +18,7 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
+  
   ) {}
 
   async getAllProducts(user): Promise<Product[]> {
@@ -39,7 +38,6 @@ export class ProductService {
   ): Promise<Product> {
     const { title, description, price } = createProductInput;
 
- 
     const newProduct = this.productRepository.create({
       title,
       description,
@@ -106,4 +104,5 @@ export class ProductService {
     result.id = removedProductId;
     return result;
   }
+  
 }

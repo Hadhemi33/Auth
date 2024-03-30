@@ -11,6 +11,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 @Module({
   imports: [
     ConfigModule,
+    // UserModule,
     forwardRef(() => UserModule),
     PassportModule,
     JwtModule.registerAsync({

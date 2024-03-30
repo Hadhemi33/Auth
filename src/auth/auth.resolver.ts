@@ -7,6 +7,7 @@ import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { SignupUserInput } from './dto/signup-user.input';
 
+
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
@@ -16,6 +17,7 @@ export class AuthResolver {
   ): Promise<SignupResponse> {
     return this.authService.signup(signupUserInput);
   }
+
   @Mutation(() => SigninResponse)
   @UseGuards(GqlAuthGuard)
   async signin(

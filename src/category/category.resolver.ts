@@ -20,21 +20,19 @@ export class CategoryResolver {
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 
-    @Args('username') username: string,
+    @Args('id') id: string,
   ): Promise<Category> {
-    const user = await this.userService.getUser(username);
+    const user = await this.userService.getUser(id);
 
     if (!user) {
-      throw new NotFoundException(`User with email  ${username} not found`);
+      throw new NotFoundException(`User with email  ${id} not found`);
     }
 
     const newCategory = await this.categoryService.createCategory(
       createCategoryInput,
       user,
     );
-    if (newCategory) {
-      throw new NotFoundException('Category already created');
-    }
+
     return newCategory;
   }
   @Query(() => Category)

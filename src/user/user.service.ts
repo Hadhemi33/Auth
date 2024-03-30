@@ -13,39 +13,12 @@ import { Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
-  async getUserByEmail(username: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: [{ username }],
-    });
-    if (!user) {
-      throw new NotFoundException('User n found');
-    }
-    return user;
-  }
-  async getUserByUsername(fullName: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: [{ fullName }],
-    });
-    if (!user) {
-      throw new NotFoundException('User nott found');
-    }
-    return user;
-  }
-  async getUserByPhoneNumber(phoneNumber: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: [{ phoneNumber }],
-    });
-    if (!user) {
-      throw new NotFoundException('User no found');
-    }
-    return user;
-  }
-
   async createUser(createUserInput: SignupUserInput): Promise<SignupResponse> {
     const { username, password, phoneNumber, fullName } = createUserInput;
     const user = this.usersRepository.create({
@@ -53,11 +26,13 @@ export class UserService {
       password,
       phoneNumber,
       fullName,
+     
     });
     try {
       await this.usersRepository.save(user);
       const { username, fullName, phoneNumber, id } = user;
       return {
+       
         id,
         phoneNumber,
         username,
@@ -71,13 +46,53 @@ export class UserService {
       }
     }
   }
-
-  async getUser(username: string): Promise<User> {
+  async getUser(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({
-      where: [{ username }],
+      where: { id },
+      relations: ['products', 'categories'],
     });
     if (!user) {
-      throw new NotFoundException(`Useer ${username} not found.`);
+      throw new NotFoundException(`Useer ${id} not found.`);
+    }
+    return user;
+  }
+
+  // async getUserById(id: string): Promise<User> {
+  //   const user = await this.usersRepository.findOne({
+  //     where: [{ id }],
+  //   });
+  //   if (!user) {
+  //     throw new NotFoundException('User with id not found');
+  //   }
+  //   return user;
+  // }
+  async getUserByEmail(username: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { username },
+      relations: ['products', 'categories'],
+    });
+    if (!user) {
+      throw new NotFoundException('User n found');
+    }
+    return user;
+  }
+  async getUserByFullName(fullName: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { fullName },
+      relations: ['products', 'categories'],
+    });
+    if (!user) {
+      throw new NotFoundException('User nott found');
+    }
+    return user;
+  }
+  async getUserByPhoneNumber(phoneNumber: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { phoneNumber },
+      relations: ['products', 'categories'],
+    });
+    if (!user) {
+      throw new NotFoundException('User no found');
     }
     return user;
   }

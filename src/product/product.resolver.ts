@@ -9,15 +9,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 
-
 @Resolver(() => Product)
 export class ProductResolver {
   constructor(private productService: ProductService) {}
 
   @Mutation(() => Product)
   @UseGuards(JwtAuthGuard)
-  @UseGuards(RoleGuard)
-  @SetMetadata('roles', ['admin'])
+  // @UseGuards(RoleGuard)
+  // @SetMetadata('roles', ['admin'])
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
     @CurrentUser() user: User,
@@ -35,6 +34,7 @@ export class ProductResolver {
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<Product> {
+   
     return this.productService.getProduct(id, user);
   }
   @Mutation(() => Product)

@@ -14,5 +14,6 @@ export class SignupResponse {
 
   @Field({ nullable: true })
   phoneNumber: string;
-
+  @Field()
+  roles: string;
 }

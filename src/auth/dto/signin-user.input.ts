@@ -9,9 +9,9 @@ export class SigninUserInput {
 
   @Field()
   @IsString()
-  @Length(8, 50)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password is too weak',
-  })
+  // @Length(8, 50)
+  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+  //   message: 'password is too weak',
+  // })
   password: string;
 }

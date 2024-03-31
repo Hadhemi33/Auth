@@ -25,6 +25,7 @@ type User {
   products: [Product!]!
   orders: [Order!]!
   categories: [Category!]!
+  roles: String!
 }
 
 type Product {
@@ -43,6 +44,7 @@ type SignupResponse {
   username: String!
   fullName: String
   phoneNumber: String
+  roles: String!
 }
 
 type SigninResponse {
@@ -50,6 +52,7 @@ type SigninResponse {
   username: String!
   fullName: String!
   phoneNumber: String!
+  roles: String!
 }
 
 type Query {

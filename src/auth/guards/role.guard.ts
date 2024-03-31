@@ -23,6 +23,13 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
+    // return requiredRoles.some((role) => user.roles.includes(role));
+    if (typeof user.roles === 'string') {
+      // If user.roles is a single role (not an array), check equality directly
+      return requiredRoles.includes(user.roles as Roles);
+    }
+
+    // If user.roles is an array, check if any of the required roles match
     return requiredRoles.some((role) => user.roles.includes(role));
   }
 }

@@ -37,20 +37,23 @@ export class AuthService {
   }
 
   async signin(user: User): Promise<SigninResponse> {
-    const username = user.username;
-    const fullName = user.fullName;
-    const phoneNumber = user.phoneNumber;
-
+    // const username = user.username;
+    // const fullName = user.fullName;
+    // const phoneNumber = user.phoneNumber;
+    // const roles = user.roles;
+    const { username, fullName, phoneNumber, roles } = user;
     const access_token = await this.jwtService.sign({
       fullName,
       username,
       sub: user.id,
       phoneNumber,
+      roles,
     });
     if (!access_token) {
       throw new InternalServerErrorException();
     }
     return {
+      roles,
       fullName,
       phoneNumber,
       access_token,

@@ -11,4 +11,6 @@ export class SigninResponse {
   fullName: string;
   @Field()
   phoneNumber: string;
+  @Field()
+  roles: string;
 }

@@ -13,7 +13,6 @@ import { Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
-
 @Injectable()
 export class UserService {
   constructor(
@@ -26,13 +25,13 @@ export class UserService {
       password,
       phoneNumber,
       fullName,
-     
+      roles: 'user',
     });
     try {
       await this.usersRepository.save(user);
-      const { username, fullName, phoneNumber, id } = user;
+      const { username, fullName, phoneNumber, id, roles } = user;
       return {
-       
+        roles,
         id,
         phoneNumber,
         username,

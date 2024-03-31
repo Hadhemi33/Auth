@@ -27,4 +27,7 @@ export class SignupUserInput {
 
   @Field({ nullable: true })
   phoneNumber: string;
+
+  // @Field()
+  // role: string;
 }

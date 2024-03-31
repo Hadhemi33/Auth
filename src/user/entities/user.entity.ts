@@ -4,13 +4,7 @@ import { Category } from 'src/category/entities/category.entity';
 import { Order } from 'src/order/entities/order.entity';
 
 import { Product } from 'src/product/entities/product.entity';
-import {
-  Column,
-  Entity,
-  OneToMany,
-
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 @ObjectType('User')
 export class User {
@@ -45,5 +39,7 @@ export class User {
   @OneToMany(() => Category, (category) => category.user)
   @Field(() => [Category])
   categories: Category[];
-
+  @Column()
+  @Field()
+  roles: string;
 }

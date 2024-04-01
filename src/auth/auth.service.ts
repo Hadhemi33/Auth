@@ -13,6 +13,7 @@ import { User } from 'src/user/entities/user.entity';
 import { SigninResponse } from './dto/signin-response';
 import { JwtService } from '@nestjs/jwt';
 import { SignupUserInput } from './dto/signup-user.input';
+import { CurrentUser } from './get-current-user.decorator';
 @Injectable()
 export class AuthService {
   constructor(
@@ -37,10 +38,6 @@ export class AuthService {
   }
 
   async signin(user: User): Promise<SigninResponse> {
-    // const username = user.username;
-    // const fullName = user.fullName;
-    // const phoneNumber = user.phoneNumber;
-    // const roles = user.roles;
     const { username, fullName, phoneNumber, roles } = user;
     const access_token = await this.jwtService.sign({
       fullName,
@@ -60,4 +57,11 @@ export class AuthService {
       username,
     };
   }
+  // async signout(): Promise<void> {
+  //   try {
+  //     await AsyncStorage.removeItem('access_token');
+  //   } catch (error) {
+  //     console.error('Error removing access token:', error);
+  //   }
+  // }
 }

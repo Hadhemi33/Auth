@@ -16,7 +16,7 @@ export class CategoryResolver {
   ) {}
 
   @Mutation(() => Category)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 

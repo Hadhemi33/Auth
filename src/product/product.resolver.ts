@@ -14,8 +14,8 @@ export class ProductResolver {
   constructor(private productService: ProductService) {}
 
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @SetMetadata('roles', ['user'])
+  // @UseGuards(JwtAuthGuard, RoleGuard)
+  // @SetMetadata('roles', ['user'])
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
     @CurrentUser() user: User,
@@ -36,7 +36,7 @@ export class ProductResolver {
     return this.productService.getProduct(id, user);
   }
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async updateProduct(
     @CurrentUser() user: User,
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
@@ -44,7 +44,7 @@ export class ProductResolver {
     return this.productService.updateProductStatus(updateProductInput, user);
   }
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async deleteProduct(
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,

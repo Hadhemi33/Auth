@@ -55,7 +55,21 @@ export class UserService {
     }
     return user;
   }
-
+  async getAllUsers(): Promise<User[]> {
+    const users = await this.usersRepository.find();
+    if (users.length === 0) {
+      throw new NotFoundException('No users found');
+    }
+    return users;
+  }
+  async deleteUser(id: string): Promise<void> {
+    const user = await this.getUser(id);
+    try {
+      await this.usersRepository.remove(user);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to delete user.');
+    }
+  }
   // async getUserById(id: string): Promise<User> {
   //   const user = await this.usersRepository.findOne({
   //     where: [{ id }],

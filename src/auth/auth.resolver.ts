@@ -27,12 +27,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => SigninResponse)
-  @UseGuards(GqlAuthGuard)
+  // @UseGuards(GqlAuthGuard)
   async signin(
     @Args('loginUserInput') loginUserInput: SigninUserInput,
     @Context() context,
   ): Promise<SigninResponse> {
     return this.authService.signin(context.user);
   }
-  
 }

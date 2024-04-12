@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { OrderModule } from './order/order.module';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'app',
+      database: 'bidapp',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
@@ -35,6 +36,7 @@ import { OrderModule } from './order/order.module';
     AuthModule,
     CategoryModule,
     OrderModule,
+    ChatModule,
   ],
 
   controllers: [AppController],

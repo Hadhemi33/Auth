@@ -1,6 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { Category } from 'src/category/entities/category.entity';
+import { Chat } from 'src/chat/entities/chat.entity';
 import { Order } from 'src/order/entities/order.entity';
 
 import { Product } from 'src/product/entities/product.entity';
@@ -15,7 +16,15 @@ export class User {
   @Column({ unique: true })
   @Field()
   username: string;
+  // Define the one-to-many relationship with the Chat entity for sent messages
+  // @OneToMany(() => Chat, (chat) => chat.sender)
+  // @Field(() => [Chat])
+  // sentMessages: Chat[];
 
+  // // Define the one-to-many relationship with the Chat entity for received messages
+  // @OneToMany(() => Chat, (chat) => chat.receiver)
+  // @Field(() => [Chat])
+  // receivedMessages: Chat[];
   @Column()
   @Field()
   password: string;

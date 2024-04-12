@@ -27,10 +27,14 @@ export class UserResolver {
   ): Promise<User> {
     return this.usersService.updateUserProfile(updateUserInput);
   }
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Query(() => User)
   async getUser(@Args('id') id: string): Promise<User> {
     return this.usersService.getUser(id);
+  }
+  @Query(() => [User])
+  async getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
   }
 
   @Query(() => User)
@@ -69,5 +73,14 @@ export class UserResolver {
     }
 
     return user.categories;
+  }
+  @Mutation(() => Boolean)
+  async deleteUser(@Args('id') id: string): Promise<boolean> {
+    try {
+      await this.usersService.deleteUser(id);
+      return true; // Deletion successful
+    } catch (error) {
+      return false; // Deletion failed
+    }
   }
 }

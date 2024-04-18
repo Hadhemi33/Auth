@@ -4,27 +4,26 @@ import { UpdateChatInput } from './dto/update-chat.input';
 import { Repository } from 'typeorm';
 import { Chat } from './entities/chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class ChatService {
   constructor(
+    private eventGateway: EventsGateway,
     @InjectRepository(Chat)
     private messageRepository: Repository<Chat>,
   ) {}
 
   async sendMessage(senderId: string, input: CreateChatInput): Promise<Chat> {
     const { receiverId, content } = input;
-
-    // Create a new chat message entity
     const newMessage = this.messageRepository.create({
       senderId,
       receiverId,
       content,
     } as Partial<Chat>);
-    // Save the new message to the database
-    const savedMessage = await this.messageRepository.save(newMessage);
 
-    // Return the saved message
+    const savedMessage = await this.messageRepository.save(newMessage);
+    this.eventGateway.sendMessage(savedMessage);
     return savedMessage;
   }
 

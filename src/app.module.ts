@@ -10,7 +10,9 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
+
 import { ChatModule } from './chat/chat.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { ChatModule } from './chat/chat.module';
     CategoryModule,
     OrderModule,
     ChatModule,
+
+    EventsModule,
   ],
 
   controllers: [AppController],

@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { SignupResponse } from 'src/auth/dto/signup-response';
-import { SigninUserInput } from 'src/auth/dto/signin-user.input';
+
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
@@ -48,7 +48,7 @@ export class UserService {
   async getUser(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['products', 'categories'],
+      relations: ['products', 'categories', 'orders'],
     });
     if (!user) {
       throw new NotFoundException(`Useer ${id} not found.`);
@@ -70,19 +70,11 @@ export class UserService {
       throw new InternalServerErrorException('Failed to delete user.');
     }
   }
-  // async getUserById(id: string): Promise<User> {
-  //   const user = await this.usersRepository.findOne({
-  //     where: [{ id }],
-  //   });
-  //   if (!user) {
-  //     throw new NotFoundException('User with id not found');
-  //   }
-  //   return user;
-  // }
+
   async getUserByEmail(username: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { username },
-      relations: ['products', 'categories'],
+      relations: ['products', 'categories', 'orders'],
     });
     if (!user) {
       throw new NotFoundException('User n found');
@@ -92,7 +84,7 @@ export class UserService {
   async getUserByFullName(fullName: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { fullName },
-      relations: ['products', 'categories'],
+      relations: ['products', 'categories', 'orders'],
     });
     if (!user) {
       throw new NotFoundException('User nott found');
@@ -102,7 +94,7 @@ export class UserService {
   async getUserByPhoneNumber(phoneNumber: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { phoneNumber },
-      relations: ['products', 'categories'],
+      relations: ['products', 'categories', 'orders'],
     });
     if (!user) {
       throw new NotFoundException('User no found');

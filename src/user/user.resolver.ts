@@ -3,17 +3,15 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
+
 import { UpdateUserInput } from './dto/update-user.input';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+
 import { Product } from 'src/product/entities/product.entity';
 import { Category } from 'src/category/entities/category.entity';
 
@@ -69,7 +67,7 @@ export class UserResolver {
   @ResolveField(() => [Category], { nullable: true })
   async categories(@Parent() user: User): Promise<Category[]> {
     if (!user || !user.categories) {
-      return []; // Return an empty array if user or products are null
+      return [];
     }
 
     return user.categories;
@@ -78,9 +76,9 @@ export class UserResolver {
   async deleteUser(@Args('id') id: string): Promise<boolean> {
     try {
       await this.usersService.deleteUser(id);
-      return true; // Deletion successful
+      return true;
     } catch (error) {
-      return false; // Deletion failed
+      return false;
     }
   }
 }

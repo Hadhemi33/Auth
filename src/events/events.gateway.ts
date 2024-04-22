@@ -10,7 +10,6 @@ import { Chat } from 'src/chat/entities/chat.entity';
 import { Injectable, Logger, UseGuards } from '@nestjs/common';
 import { WsJwtGuard } from 'src/auth/ws-jwt/ws-jwt.guard';
 import { SocketAuthMiddleware } from 'src/auth/ws-jwt/ws.mw';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @WebSocketGateway({ namespace: 'events' })
 @UseGuards(WsJwtGuard)

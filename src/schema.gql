@@ -22,10 +22,10 @@ type User {
   password: String!
   fullName: String!
   phoneNumber: String!
-  products: [Product!]!
   orders: [Order!]!
   categories: [Category!]!
   roles: String!
+  products: [Product!]
 }
 
 type Product {
@@ -35,7 +35,6 @@ type Product {
   price: String!
   status: String!
   createdAt: String!
-  user: User!
   order: Order!
 }
 

@@ -18,20 +18,11 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-  
   ) {}
 
-  async getAllProducts(user): Promise<Product[]> {
-    const products = await this.productRepository.find({
-      where: { user },
-      relations: ['user', 'categories'],
-    });
-    if (!products) {
-      throw new InternalServerErrorException();
-    }
-    return products;
+  async getAllProducts(): Promise<Product[]> {
+    return await this.productRepository.find();
   }
-
   async createProduct(
     createProductInput: CreateProductInput,
     user: any,
@@ -104,5 +95,4 @@ export class ProductService {
     result.id = removedProductId;
     return result;
   }
-  
 }

@@ -38,7 +38,7 @@ export class User {
   phoneNumber: string;
 
   @OneToMany(() => Product, (product) => product.user)
-  @Field(() => [Product])
+  // @Field(() => [Product])
   products: Product[];
 
   @OneToMany(() => Order, (order) => order.user)

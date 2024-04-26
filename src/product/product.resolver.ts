@@ -23,10 +23,9 @@ export class ProductResolver {
     return this.productService.createProduct(createProductInput, user);
   }
 
-  @Query(() => [Product])
-  async getAllProducts(@CurrentUser() user: User): Promise<Product[]> {
-    console.log('Current User:', user);
-    return this.productService.getAllProducts(user);
+  @Query(() => [Product], { name: 'getAllProducts' })
+  async getAllProducts(): Promise<Product[]> {
+    return this.productService.getAllProducts();
   }
   @Query(() => Product)
   async getProduct(

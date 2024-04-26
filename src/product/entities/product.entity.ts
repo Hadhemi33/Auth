@@ -39,9 +39,8 @@ export class Product {
   createdAt: string;
 
   @ManyToOne(() => User, (user) => user.products)
-  @Field(() => User)
   user: User;
-
+  
   @ManyToOne(() => Order, (order) => order.products)
   @Field(() => Order)
   order: Order;

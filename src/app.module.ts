@@ -28,7 +28,7 @@ import { EventsModule } from './events/events.module';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'bidapp',
+      database: 'pp',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,

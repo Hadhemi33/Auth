@@ -36,6 +36,7 @@ type Product {
   status: String!
   createdAt: String!
   order: Order!
+  imageUrl: String
 }
 
 type SignupResponse {
@@ -85,7 +86,6 @@ type Query {
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
-  updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
   updateUser(updateUserInput: UpdateUserInput!): User!
   deleteUser(id: String!): Boolean!
@@ -104,14 +104,7 @@ input CreateProductInput {
   price: String!
   description: String!
   categories: [ID!]!
-}
-
-input UpdateProductInput {
-  id: ID!
-  title: String
-  description: String!
-  price: String!
-  status: String!
+  imageUrl: String
 }
 
 input UpdateUserInput {

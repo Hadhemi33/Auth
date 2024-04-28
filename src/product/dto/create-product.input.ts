@@ -12,6 +12,9 @@ export class CreateProductInput {
   @Field()
   description: string;
 
-  @Field(() => [ID]) 
+  @Field(() => [ID])
   categories: string[];
+
+  @Field({ nullable: true })
+  imageUrl?: string; // New field for image URL
 }

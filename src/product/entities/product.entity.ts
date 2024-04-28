@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -11,6 +11,7 @@ import { ProductStatus } from '../product-status.enum';
 import { User } from 'src/user/entities/user.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Order } from 'src/order/entities/order.entity';
+
 @Entity()
 @ObjectType('Product')
 export class Product {
@@ -40,11 +41,15 @@ export class Product {
 
   @ManyToOne(() => User, (user) => user.products)
   user: User;
-  
+
   @ManyToOne(() => Order, (order) => order.products)
   @Field(() => Order)
   order: Order;
 
   @ManyToMany(() => Category, (category) => category.products)
   categories: Category[];
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageUrl: string;
 }

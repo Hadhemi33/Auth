@@ -7,11 +7,9 @@ import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { Repository, EntityManager, Transaction } from 'typeorm';
 import { ProductStatus } from './product-status.enum';
 import { User } from 'src/user/entities/user.entity';
-
-import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
@@ -23,11 +21,39 @@ export class ProductService {
   async getAllProducts(): Promise<Product[]> {
     return await this.productRepository.find();
   }
+
+  // async createProduct(
+  //   createProductInput: CreateProductInput,
+  //   user: any,
+  // ): Promise<Product> {
+  //   const { title, description, price } = createProductInput;
+
+  //   const newProduct = this.productRepository.create({
+  //     title,
+  //     description,
+  //     price,
+
+  //     status: ProductStatus.InStock,
+  //     createdAt: new Date().toISOString(),
+  //     user,
+  //     order: null,
+
+  //     categories: [],
+  //   });
+
+  //   try {
+  //     await this.productRepository.save(newProduct);
+  //     return newProduct;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
   async createProduct(
     createProductInput: CreateProductInput,
-    user: any,
+    user: User,
   ): Promise<Product> {
-    const { title, description, price } = createProductInput;
+    const { title, description, price, categories, imageUrl } =
+      createProductInput;
 
     const newProduct = this.productRepository.create({
       title,
@@ -37,7 +63,7 @@ export class ProductService {
       createdAt: new Date().toISOString(),
       user,
       order: null,
-
+      imageUrl, // Store the image URL
       categories: [],
     });
 
@@ -48,6 +74,7 @@ export class ProductService {
       throw new InternalServerErrorException();
     }
   }
+
   async getProduct(id: string, user: User): Promise<Product> {
     const productFound = await this.productRepository.findOne({
       where: { id, user },

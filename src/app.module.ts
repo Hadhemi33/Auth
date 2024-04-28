@@ -11,21 +11,27 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
 import { ChatModule } from './chat/chat.module';
 import { EventsModule } from './events/events.module';
+
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+  
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
 
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+     
       context: ({ req }) => ({ req }),
+     
+      
     }),
+
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

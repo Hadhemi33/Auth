@@ -1,5 +1,5 @@
 import { IsEnum, IsUUID, Length } from 'class-validator';
-import { CreateProductInput } from './create-product.input';
+
 import { InputType, Field, Int, PartialType, ID } from '@nestjs/graphql';
 import { ProductStatus } from '../product-status.enum';
 

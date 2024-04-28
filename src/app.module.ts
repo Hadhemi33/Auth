@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -13,23 +13,27 @@ import { OrderModule } from './order/order.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatModule } from './chat/chat.module';
 import { EventsModule } from './events/events.module';
-
-
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace';
+import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploaded-files'),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-  
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
 
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-     
+      // uploads: {
+      //   maxFileSize: 10000000, // 10 MB
+      //   maxFiles: 1,
+      // },
       context: ({ req }) => ({ req }),
-     
-      
     }),
 
     TypeOrmModule.forRootAsync({
@@ -59,4 +63,11 @@ import { EventsModule } from './events/events.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Apply the upload middleware
+    consumer
+      .apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
+      .forRoutes('/graphql');
+  }
+}

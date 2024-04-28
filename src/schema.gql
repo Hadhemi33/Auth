@@ -86,6 +86,7 @@ type Query {
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
+  uploadProductImage(productId: ID!, file: Upload!): Product!
   deleteProduct(id: String!): Product!
   updateUser(updateUserInput: UpdateUserInput!): User!
   deleteUser(id: String!): Boolean!
@@ -106,6 +107,9 @@ input CreateProductInput {
   categories: [ID!]!
   imageUrl: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input UpdateUserInput {
   id: ID!

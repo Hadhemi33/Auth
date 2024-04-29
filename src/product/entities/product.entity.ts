@@ -2,6 +2,8 @@ import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import {
   Column,
   Entity,
+  JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -40,13 +42,21 @@ export class Product {
   createdAt: string;
 
   @ManyToOne(() => User, (user) => user.products)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @ManyToOne(() => Order, (order) => order.products)
-  @Field(() => Order)
+  // @Field(() => Order)
+  @JoinColumn({ name: 'orderId' })
   order: Order;
 
   @ManyToMany(() => Category, (category) => category.products)
+  @JoinTable({
+    name: 'product_categories', // Join table name
+    joinColumn: { name: 'productId', referencedColumnName: 'id' }, // Column name on the Product side
+    inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' }, // Column name on the Category side
+  })
+  @Field(() => [Category])
   categories: Category[];
 
   @Column({ nullable: true })

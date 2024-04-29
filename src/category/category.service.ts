@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
@@ -45,6 +46,16 @@ export class CategoryService {
     }
     return category;
   }
+  async getCategoryByName(name: string): Promise<Category> {
+    const category = await this.categoryRepository.findOne({
+      where: { name },
+      relations: ['user'],
+    });
+    if (!category) {
+      throw new NotFoundException(`Category with Name ${name} not found`);
+    }
+    return category;
+  }
   async getAllCategories(): Promise<Category[]> {
     return this.categoryRepository.find({ relations: ['user'] });
   }
@@ -53,12 +64,33 @@ export class CategoryService {
     updateCategoryInput: UpdateCategoryInput,
   ): Promise<Category> {
     const { name } = updateCategoryInput;
-    const category = await this.getCategoryById(id);
+    const category = await this.getCategoryByName(id);
 
     if (name) {
       category.name = name;
     }
 
     return this.categoryRepository.save(category);
+  }
+  async deleteAllCategories(): Promise<void> {
+    await this.categoryRepository.clear(); // This clears all records in the Category table
+  }
+  async deleteCategory(name: string): Promise<void> {
+    try {
+      const category = await this.categoryRepository.findOne({
+        where: { name },
+        relations: ['user'],
+      });
+
+      if (!category) {
+        throw new NotFoundException(`Category with name "${name}" not found.`);
+      }
+
+      console.log('Deleting category:', category); // Add debug logging
+      await this.categoryRepository.remove(category);
+    } catch (error) {
+      console.error('Error in deleteCategory:', error); // Add error logging
+      throw error; // Rethrow the error
+    }
   }
 }

@@ -16,15 +16,7 @@ export class User {
   @Column({ unique: true })
   @Field()
   username: string;
-  // Define the one-to-many relationship with the Chat entity for sent messages
-  // @OneToMany(() => Chat, (chat) => chat.sender)
-  // @Field(() => [Chat])
-  // sentMessages: Chat[];
 
-  // // Define the one-to-many relationship with the Chat entity for received messages
-  // @OneToMany(() => Chat, (chat) => chat.receiver)
-  // @Field(() => [Chat])
-  // receivedMessages: Chat[];
   @Column()
   @Field()
   password: string;

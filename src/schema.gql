@@ -3,9 +3,9 @@
 # ------------------------------------------------------
 
 type Category {
-  id: ID!
+  id: String!
   name: String!
-  user: User!
+  products: [Product!]!
 }
 
 type Order {
@@ -35,7 +35,7 @@ type Product {
   price: String!
   status: String!
   createdAt: String!
-  order: Order!
+  categories: [Category!]!
   imageUrl: String
 }
 
@@ -78,6 +78,7 @@ type Query {
   getUserByFullName(fullName: String!): User!
   getUserByPhoneNumber(phoneNumber: String!): User!
   getCategoryById(id: String!): Category!
+  getCategoryByName(name: String!): Category!
   getAllCategories: [Category!]!
   orders: [Order!]!
   order(id: String!): Order!
@@ -94,6 +95,12 @@ type Mutation {
   signin(loginUserInput: SigninUserInput!): SigninResponse!
   createCategory(createCategoryInput: CreateCategoryInput!, id: String!): Category!
   updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
+
+  """Delete all categories from the database"""
+  deleteAllCategories: Boolean!
+
+  """Delete a category by its name"""
+  deleteCategory(name: String!): Boolean!
   createOrder(order: CreateOrderDto!): Order!
   updateOrder(id: String!, order: UpdateOrderDto!): Order!
   deleteOrder(id: String!): Boolean!

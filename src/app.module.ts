@@ -18,9 +18,9 @@ import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploaded-files'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'uploaded-files'),
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

@@ -5,6 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -15,7 +16,7 @@ import {
 @ObjectType()
 export class Category {
   @PrimaryGeneratedColumn()
-  @Field(() => ID)
+  @Field()
   id: string;
 
   @Column()
@@ -23,10 +24,11 @@ export class Category {
   name: string;
 
   @ManyToOne(() => User, (user) => user.categories)
-  @Field(() => User)
+  // @Field(() => User)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-
-  @ManyToMany(() => Product, (product) => product.categories)
+  @ManyToMany(() => Product, (product) => product.categories) // Reverse relationship with Product
+  @Field(() => [Product])
   products: Product[];
 }

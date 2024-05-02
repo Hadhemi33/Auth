@@ -4,6 +4,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class SigninResponse {
   @Field()
   access_token: string;
+  @Field()
+  id: string;
 
   @Field()
   username: string;

@@ -21,7 +21,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
         signOptions: {
           expiresIn: '1h',
         },
-        secret: `Todo-Protect Me`,
+        secret: 'JWT_SECRET',
       }),
     }),
   ],

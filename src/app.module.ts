@@ -11,11 +11,12 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { OrderModule } from './order/order.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ChatModule } from './chat/chat.module';
-import { EventsModule } from './events/events.module';
+// import { ChatModule } from './chat/chat.module';
+// import { EventsModule } from './events/events.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace';
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
+import { JwtService } from '@nestjs/jwt';
 @Module({
   imports: [
     // ServeStaticModule.forRoot({
@@ -29,11 +30,22 @@ import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
       driver: ApolloDriver,
 
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      // uploads: {
-      //   maxFileSize: 10000000, // 10 MB
-      //   maxFiles: 1,
-      // },
-      context: ({ req }) => ({ req }),
+
+      context:
+        //  ({ req }) => ({ req }),
+        ({ req }) => {
+          const token = req.headers.authorization?.split(' ')[1];
+          if (token) {
+            try {
+              const jwtService = new JwtService({ secret: 'JWT_SECRET' }); // Ensure this is your JWT secret
+              const user = jwtService.decode(token);
+              req.user = user; // Store the user in the request context
+            } catch (e) {
+              console.error('JWT Decoding Error:', e);
+            }
+          }
+          return { req };
+        },
     }),
 
     TypeOrmModule.forRootAsync({
@@ -55,9 +67,9 @@ import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
     AuthModule,
     CategoryModule,
     OrderModule,
-    ChatModule,
+    // ChatModule,
 
-    EventsModule,
+    // EventsModule,
   ],
 
   controllers: [AppController],

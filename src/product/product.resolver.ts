@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Context } from '@nestjs/graphql';
 import { ProductService } from './product.service';
 import { Product } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
@@ -10,6 +10,9 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { join } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -19,35 +22,37 @@ export class ProductResolver {
     private productRepository: Repository<Product>,
   ) {}
 
-  // @Mutation(() => Product)
-  // // @UseGuards(JwtAuthGuard, RoleGuard)
-  // // @SetMetadata('roles', ['user'])
-  // async createProduct(
-  //   @Args('createProductInput') createProductInput: CreateProductInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<Product> {
-  //   return this.productService.createProduct(createProductInput, user);
-  // }
-
   @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
-    @CurrentUser() user: User,
+    @Context() context,
   ): Promise<Product> {
-    return this.productService.createProduct(createProductInput, user);
+    const user: User = context.req.user;
+    if (!user) {
+      throw new Error('You must be signed in to create a product');
+    }
+
+    return this.productService.create(createProductInput, user);
   }
 
-  @Query(() => [Product], { name: 'getAllProducts' })
-  async getAllProducts(): Promise<Product[]> {
-    return this.productService.getAllProducts();
+  @Query(() => [Product])
+  @UseGuards(JwtAuthGuard)
+  async getAllProducts(
+    @Args('userId', { type: () => String, nullable: true }) userId?: string,
+    @Args('title', { type: () => String, nullable: true }) title?: string,
+    @Args('price', { type: () => String, nullable: true }) price?: string,
+    @Args('categoryId', { type: () => String, nullable: true })
+    categoryId?: string,
+  ): Promise<Product[]> {
+    return this.productService.getAllProducts(userId, categoryId, title, price);
   }
-
   @Query(() => Product)
   async getProduct(
     @Args('id', { type: () => String }) id: string,
     @CurrentUser() user: User,
   ): Promise<Product> {
-    return this.productService.getProduct(id, user);
+    return this.productService.getProductUserById(id, user);
   }
 
   @Mutation(() => Product)
@@ -58,7 +63,6 @@ export class ProductResolver {
     const { createReadStream, filename } = file;
     const filePath = join(__dirname, '..', 'uploads', filename);
 
-    // Save the uploaded file
     await new Promise((resolve, reject) => {
       createReadStream()
         .pipe(createWriteStream(filePath))
@@ -66,11 +70,7 @@ export class ProductResolver {
         .on('error', reject);
     });
 
-    // Update the product with the image URL
-    // const product = await this.productRepository.findOne({
-    //   where: { ID },
-    // });
-    const product = await this.productService.getProduct(
+    const product = await this.productService.getProductUserById(
       productId.toString(),
       null,
     );
@@ -81,27 +81,38 @@ export class ProductResolver {
 
     return product;
   }
-  // @Mutation(() => Product)
-  // // @UseGuards(JwtAuthGuard)
+  @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async updateProduct(
     @CurrentUser() user: User,
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
   ): Promise<Product> {
-    return this.productService.updateProductStatus(updateProductInput, user);
+    return this.productService.updateProduct(updateProductInput, user);
   }
-  // @Mutation(() => Product)
-  // async updateProduct(
-  //   @CurrentUser() user: User,
-  //   @Args('updateProductInput') updateProductInput: UpdateProductInput,
-  // ): Promise<Product> {
-  //   return this.productService.updateProductStatus(updateProductInput, user);
-  // }
+
   @Mutation(() => Product)
-  // @UseGuards(JwtAuthGuard)
   async deleteProduct(
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ): Promise<Product> {
     return this.productService.deleteProduct(id, user);
+  }
+
+  @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
+  async likeProduct(
+    @Args('productId') productId: string,
+    @CurrentUser() user: User,
+  ): Promise<Product> {
+    console.log('Current User:', user);
+    return this.productService.likeProduct(productId, user);
+  }
+
+  @Mutation(() => Product)
+  async dislikeProduct(
+    @Args('productId') productId: string,
+    @CurrentUser() user: User,
+  ): Promise<Product> {
+    return this.productService.dislikeProduct(productId, user);
   }
 }

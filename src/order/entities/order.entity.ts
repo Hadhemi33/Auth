@@ -32,4 +32,9 @@ export class Order {
   @OneToMany(() => Product, (product) => product.order)
   @Field(() => [Product])
   products: Product[];
+
+  @Column({ type: 'boolean', default: false })
+  @Field(() => Boolean, { nullable: false })
+  paid: boolean;
+  
 }

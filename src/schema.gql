@@ -5,6 +5,7 @@
 type Category {
   id: String!
   name: String!
+  user: User!
   products: [Product!]!
 }
 
@@ -14,6 +15,7 @@ type Order {
   totalPrice: String!
   user: User!
   products: [Product!]!
+  paid: Boolean!
 }
 
 type User {
@@ -22,10 +24,11 @@ type User {
   password: String!
   fullName: String!
   phoneNumber: String!
+  products: [Product!]!
   orders: [Order!]!
   categories: [Category!]!
   roles: String!
-  products: [Product!]
+  likedProducts: [Product!]
 }
 
 type Product {
@@ -35,8 +38,11 @@ type Product {
   price: String!
   status: String!
   createdAt: String!
-  categories: [Category!]!
+  category: Category!
   imageUrl: String
+  nbrLike: Int!
+  likedBy: [User!]
+  quantity: Int!
 }
 
 type SignupResponse {
@@ -49,27 +55,15 @@ type SignupResponse {
 
 type SigninResponse {
   access_token: String!
+  id: String!
   username: String!
   fullName: String!
   phoneNumber: String!
   roles: String!
 }
 
-type Chat {
-  id: ID!
-  senderId: String!
-  receiverId: String!
-  content: String!
-  timestamp: DateTime!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Query {
-  getAllProducts: [Product!]!
+  getAllProducts(userId: String, title: String, price: String, categoryId: String): [Product!]!
   getProduct(id: String!): Product!
   getUser(id: String!): User!
   getAllUsers: [User!]!
@@ -80,19 +74,21 @@ type Query {
   getCategoryById(id: String!): Category!
   getCategoryByName(name: String!): Category!
   getAllCategories: [Category!]!
-  orders: [Order!]!
-  order(id: String!): Order!
-  getMessages(receiverId: String!): [Chat!]!
+  getOrderById(id: String!): Order!
+  getAllOrders: [Order!]!
 }
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   uploadProductImage(productId: ID!, file: Upload!): Product!
+  updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  deleteUser(id: String!): Boolean!
+  likeProduct(productId: String!): Product!
+  dislikeProduct(productId: String!): Product!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  deleteUser(id: String!): Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!, id: String!): Category!
   updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
 
@@ -101,29 +97,33 @@ type Mutation {
 
   """Delete a category by its name"""
   deleteCategory(name: String!): Boolean!
-  createOrder(order: CreateOrderDto!): Order!
-  updateOrder(id: String!, order: UpdateOrderDto!): Order!
+  addProductToOrder(productId: String!, orderId: String): Order!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(id: String!): Boolean!
-  sendMessage(senderId: String!, input: CreateChatInput!): Chat!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
+  createdAt: String! = "2024-05-02T01:41:08.943Z"
   description: String!
-  categories: [ID!]!
+  categoryId: String!
   imageUrl: String
+  quantity: Float
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-input UpdateUserInput {
+input UpdateProductInput {
   id: ID!
-  fullName: String
-  username: String
-  password: String
-  phoneNumber: String
+  title: String
+  description: String!
+  price: String!
+  status: String!
+  quantity: Float
+  imageUrl: String
+  nbrLike: Float
 }
 
 input SignupUserInput {
@@ -138,6 +138,14 @@ input SigninUserInput {
   password: String!
 }
 
+input UpdateUserInput {
+  id: ID!
+  fullName: String
+  username: String
+  password: String
+  phoneNumber: String
+}
+
 input CreateCategoryInput {
   name: String!
 }
@@ -146,19 +154,8 @@ input UpdateCategoryInput {
   name: String
 }
 
-input CreateOrderDto {
-  totalPrice: String!
-  userId: String!
-  productIds: [String!]!
-}
-
-input UpdateOrderDto {
+input UpdateOrderInput {
+  id: String!
   totalPrice: String
-  userId: String
-  productIds: [String!]
-}
-
-input CreateChatInput {
-  receiverId: String!
-  content: String!
+  paid: Boolean
 }

@@ -14,6 +14,8 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 
 import { Product } from 'src/product/entities/product.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -25,12 +27,12 @@ export class UserResolver {
   ): Promise<User> {
     return this.usersService.updateUserProfile(updateUserInput);
   }
-  // @UseGuards(JwtAuthGuard)
   @Query(() => User)
   async getUser(@Args('id') id: string): Promise<User> {
     return this.usersService.getUser(id);
   }
   @Query(() => [User])
+  @UseGuards(JwtAuthGuard)
   async getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();
   }

@@ -24,11 +24,14 @@ export class Category {
   name: string;
 
   @ManyToOne(() => User, (user) => user.categories)
-  // @Field(() => User)
+  @Field(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToMany(() => Product, (product) => product.categories) // Reverse relationship with Product
+  @OneToMany(() => Product, (product) => product.category)
   @Field(() => [Product])
   products: Product[];
+  // @OneToMany(() => Product, (product) => product.category)
+  // @Field(() => [Product])
+  // products: Product[];
 }

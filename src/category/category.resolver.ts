@@ -4,11 +4,12 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
 import { UserService } from 'src/user/user.service';
-import { NotFoundException, UseGuards } from '@nestjs/common';
+import { NotFoundException, SetMetadata, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -18,7 +19,8 @@ export class CategoryResolver {
   ) {}
 
   @Mutation(() => Category)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['user'])
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 

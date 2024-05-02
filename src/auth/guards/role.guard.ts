@@ -33,3 +33,6 @@ export class RoleGuard implements CanActivate {
     return requiredRoles.some((role) => user.roles.includes(role));
   }
 }
+
+// @UseGuards(JwtAuthGuard, RoleGuard)
+// @SetMetadata('roles', ['user'])

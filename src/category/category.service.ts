@@ -39,7 +39,7 @@ export class CategoryService {
   async getCategoryById(id: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'products'],
     });
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -57,7 +57,7 @@ export class CategoryService {
     return category;
   }
   async getAllCategories(): Promise<Category[]> {
-    return this.categoryRepository.find({ relations: ['user'] });
+    return this.categoryRepository.find({ relations: ['user', 'products'] });
   }
   async updateCategory(
     id: string,

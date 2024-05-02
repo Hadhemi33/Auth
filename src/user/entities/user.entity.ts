@@ -5,7 +5,13 @@ import { Chat } from 'src/chat/entities/chat.entity';
 import { Order } from 'src/order/entities/order.entity';
 
 import { Product } from 'src/product/entities/product.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 @ObjectType('User')
 export class User {
@@ -30,7 +36,7 @@ export class User {
   phoneNumber: string;
 
   @OneToMany(() => Product, (product) => product.user)
-  // @Field(() => [Product])
+  @Field(() => [Product])
   products: Product[];
 
   @OneToMany(() => Order, (order) => order.user)
@@ -43,4 +49,8 @@ export class User {
   @Column()
   @Field()
   roles: string;
+
+  @ManyToMany(() => Product, (product) => product.likedBy)
+  @Field(() => [Product], { nullable: true })
+  likedProducts?: Product[];
 }

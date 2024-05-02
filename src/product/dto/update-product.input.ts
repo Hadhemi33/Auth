@@ -1,6 +1,6 @@
-import { IsEnum, IsUUID, Length } from 'class-validator';
+import { IsEnum, Length } from 'class-validator';
 
-import { InputType, Field, Int, PartialType, ID } from '@nestjs/graphql';
+import { InputType, Field, ID } from '@nestjs/graphql';
 import { ProductStatus } from '../product-status.enum';
 
 @InputType()
@@ -16,7 +16,17 @@ export class UpdateProductInput {
 
   @Field()
   price?: string;
+
   @Field()
   @IsEnum(ProductStatus)
-  status: ProductStatus;
+  status?: ProductStatus;
+
+  @Field({ nullable: true })
+  quantity?: number;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Field({ nullable: true })
+  nbrLike: number;
 }

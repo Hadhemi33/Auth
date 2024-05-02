@@ -1,32 +1,50 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { verify } from 'jsonwebtoken';
+// import {
+//   CanActivate,
+//   ExecutionContext,
+//   Injectable,
+//   UnauthorizedException,
+// } from '@nestjs/common';
+// import { verify } from 'jsonwebtoken';
+// import { Observable } from 'rxjs';
+// import { Socket } from 'socket.io';
+// import { ConfigService } from '@nestjs/config';
 
-import { Observable } from 'rxjs';
-import { Socket } from 'socket.io';
+// @Injectable()
+// export class WsJwtGuard implements CanActivate {
+//   constructor(private readonly configService: ConfigService) {}
 
-@Injectable()
-export class WsJwtGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    if (context.getType() !== 'ws') {
-      return true;
-    }
-    const client: Socket = context.switchToWs().getClient();
+//   canActivate(
+//     context: ExecutionContext,
+//   ): boolean | Promise<boolean> | Observable<boolean> {
+//     if (context.getType() !== 'ws') {
+//       return true;
+//     }
 
-    WsJwtGuard.validateToken(client);
-    return true;
-  }
-  static validateToken(client: Socket) {
-    const { authorization } = client.handshake.headers;
-    Logger.log({ authorization });
-    const token: string = authorization.split(' ')[1];
-    const payload = verify(token, 'Todo-Protect Me');
-    return payload;
-  }
-}
+//     const client: Socket = context.switchToWs().getClient();
+
+//     try {
+//       this.validateToken(client); // Call instance method with 'this'
+//     } catch (error) {
+//       throw new UnauthorizedException('Invalid or missing token.');
+//     }
+
+//     return true;
+//   }
+
+//   private validateToken(client: Socket) {
+//     const { authorization } = client.handshake.headers;
+
+//     if (!authorization) {
+//       throw new UnauthorizedException('Missing authorization header.');
+//     }
+
+//     const token = authorization.split(' ')[1];
+//     const secret = this.configService.get('JWT_SECRET', 'default_secret');
+
+//     if (!token) {
+//       throw new UnauthorizedException('Token missing in authorization header.');
+//     }
+
+//     verify(token, secret); // Throws error if token is invalid
+//   }
+// }

@@ -33,7 +33,7 @@ export class Product {
   @Field()
   price: string;
 
-  @Column()
+  @Column({ default: 'In Stock' })
   @Field()
   status: ProductStatus;
 
@@ -43,23 +43,41 @@ export class Product {
 
   @ManyToOne(() => User, (user) => user.products)
   @JoinColumn({ name: 'userId' })
+  // @Field(() => User)
   user: User;
 
   @ManyToOne(() => Order, (order) => order.products)
-  // @Field(() => Order)
   @JoinColumn({ name: 'orderId' })
   order: Order;
 
-  @ManyToMany(() => Category, (category) => category.products)
-  @JoinTable({
-    name: 'product_categories', // Join table name
-    joinColumn: { name: 'productId', referencedColumnName: 'id' }, // Column name on the Product side
-    inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' }, // Column name on the Category side
-  })
-  @Field(() => [Category])
-  categories: Category[];
+  // @ManyToOne(() => Category, (category) => category.products)
+  // @JoinTable({
+  //   name: 'product_categories',
+  //   // joinColumn: { name: 'productId', referencedColumnName: 'id' },
+  //   // inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' },
+  // })
+  // @JoinColumn({ name: 'categoryId' })
+  // @Field(() => Category)
+  // category: Category;
+  @ManyToOne(() => Category, (category) => category.products)
+  @JoinColumn({ name: 'categoryId' })
+  @Field(() => Category, { nullable: false }) // Ensure it's marked as non-nullable in the schema
+  category: Category;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
   imageUrl: string;
+
+  @Column({ type: 'int', default: 0 })
+  @Field(() => Int, { nullable: false })
+  nbrLike: number;
+
+  @ManyToMany(() => User, (user) => user.likedProducts)
+  @Field(() => [User], { nullable: true })
+  @JoinTable() // Allows the linking between products and users
+  likedBy?: User[];
+
+  @Column({ type: 'int', default: 1 })
+  @Field(() => Int, { nullable: false })
+  quantity: number;
 }

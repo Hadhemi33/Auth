@@ -50,15 +50,6 @@ export class Product {
   @JoinColumn({ name: 'orderId' })
   order: Order;
 
-  // @ManyToOne(() => Category, (category) => category.products)
-  // @JoinTable({
-  //   name: 'product_categories',
-  //   // joinColumn: { name: 'productId', referencedColumnName: 'id' },
-  //   // inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' },
-  // })
-  // @JoinColumn({ name: 'categoryId' })
-  // @Field(() => Category)
-  // category: Category;
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'categoryId' })
   @Field(() => Category, { nullable: false }) // Ensure it's marked as non-nullable in the schema
@@ -72,9 +63,13 @@ export class Product {
   @Field(() => Int, { nullable: false })
   nbrLike: number;
 
-  @ManyToMany(() => User, (user) => user.likedProducts)
+  @ManyToMany(() => User, (user) => user.likedProducts, { cascade: true })
+  @JoinTable({
+    name: 'product_likes', // Custom join table name
+    joinColumn: { name: 'productId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
+  })
   @Field(() => [User], { nullable: true })
-  @JoinTable() // Allows the linking between products and users
   likedBy?: User[];
 
   @Column({ type: 'int', default: 1 })

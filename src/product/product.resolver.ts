@@ -10,7 +10,7 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { join } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UseGuards } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 
@@ -37,7 +37,7 @@ export class ProductResolver {
   }
 
   @Query(() => [Product])
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)  //works
   async getAllProducts(
     @Args('userId', { type: () => String, nullable: true }) userId?: string,
     @Args('title', { type: () => String, nullable: true }) title?: string,
@@ -99,20 +99,18 @@ export class ProductResolver {
   }
 
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
   async likeProduct(
-    @Args('productId') productId: string,
-    @CurrentUser() user: User,
+    @Args({ name: 'productId', type: () => ID }) productId: string,
+    @Args({ name: 'userId', type: () => ID }) userId: string,
   ): Promise<Product> {
-    console.log('Current User:', user);
-    return this.productService.likeProduct(productId, user);
+    return this.productService.likeProduct(productId, userId);
   }
 
   @Mutation(() => Product)
   async dislikeProduct(
-    @Args('productId') productId: string,
-    @CurrentUser() user: User,
+    @Args({ name: 'productId', type: () => ID }) productId: string,
+    @Args({ name: 'userId', type: () => ID }) userId: string,
   ): Promise<Product> {
-    return this.productService.dislikeProduct(productId, user);
+    return this.productService.dislikeProduct(productId, userId);
   }
 }

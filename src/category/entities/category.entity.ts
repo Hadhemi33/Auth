@@ -28,7 +28,10 @@ export class Category {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @Field(() => [Product])
   products: Product[];
   // @OneToMany(() => Product, (product) => product.category)

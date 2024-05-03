@@ -24,10 +24,10 @@ type User {
   password: String!
   fullName: String!
   phoneNumber: String!
+  roles: String!
   products: [Product!]!
   orders: [Order!]!
   categories: [Category!]!
-  roles: String!
   likedProducts: [Product!]
 }
 
@@ -83,20 +83,16 @@ type Mutation {
   uploadProductImage(productId: ID!, file: Upload!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
-  likeProduct(productId: String!): Product!
-  dislikeProduct(productId: String!): Product!
+  likeProduct(productId: ID!, userId: ID!): Product!
+  dislikeProduct(productId: ID!, userId: ID!): Product!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
   updateUser(updateUserInput: UpdateUserInput!): User!
   deleteUser(id: String!): Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!, id: String!): Category!
-  updateCategory(id: ID!, updateCategoryInput: UpdateCategoryInput!): Category!
-
-  """Delete all categories from the database"""
+  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): Category!
   deleteAllCategories: Boolean!
-
-  """Delete a category by its name"""
-  deleteCategory(name: String!): Boolean!
+  deleteCategory(name: String!): String!
   addProductToOrder(productId: String!, orderId: String): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(id: String!): Boolean!
@@ -105,7 +101,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-02T01:41:08.943Z"
+  createdAt: String! = "2024-05-03T14:47:27.311Z"
   description: String!
   categoryId: String!
   imageUrl: String

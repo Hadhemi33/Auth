@@ -10,7 +10,15 @@ import { Order } from 'src/order/entities/order.entity';
 import { ProductService } from 'src/product/product.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category, User, Product, Order])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Category,
+      
+      User,
+      Product,
+      Order,
+    ]),
+  ],
   providers: [CategoryResolver, CategoryService, UserService, ProductService],
 })
 export class CategoryModule {}

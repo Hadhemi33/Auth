@@ -19,8 +19,8 @@ export class CategoryResolver {
   ) {}
 
   @Mutation(() => Category)
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @SetMetadata('roles', ['user'])
+  // @UseGuards(JwtAuthGuard, RoleGuard)
+  // @SetMetadata('roles', ['user'])
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 
@@ -53,15 +53,13 @@ export class CategoryResolver {
   }
   @Mutation(() => Category)
   async updateCategory(
-    @Args('id', { type: () => ID }) id: string,
+    @Args('id') id: string,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
   ): Promise<Category> {
     return this.categoryService.updateCategory(id, updateCategoryInput);
   }
 
-  @Mutation(() => Boolean, {
-    description: 'Delete all categories from the database',
-  })
+  @Mutation(() => Boolean)
   async deleteAllCategories(): Promise<boolean> {
     try {
       await this.categoryService.deleteAllCategories();
@@ -71,18 +69,27 @@ export class CategoryResolver {
       throw error;
     }
   }
-  @Mutation(() => Boolean, {
-    description: 'Delete a category by its name',
-  })
-  async deleteCategory(
-    @Args('name', { type: () => String }) name: string,
-  ): Promise<boolean> {
-    try {
-      await this.categoryService.deleteCategory(name); // Call the service method with the category name
-      return true; // Indicate success
-    } catch (error) {
-      console.error('Error deleting category:', error); // Log error for debugging
-      throw error; // Rethrow to propagate error to GraphQL layer
+  // @Mutation(() => Boolean)
+  // async deleteCategory(
+  //   @Args('name', { type: () => String }) name: string,
+  // ): Promise<boolean> {
+  //   try {
+  //     await this.categoryService.deleteCategory(name);
+  //     return true;
+  //   } catch (error) {
+  //     console.error('Error deleting category:', error);
+  //     throw error;
+  //   }
+  // }
+  @Mutation(() => String) // Indique que la mutation renverra un message de confirmation
+  async deleteCategory(@Args('name') name: string): Promise<string> {
+    const category = await this.categoryService.getCategoryByName(name);
+
+    if (!category) {
+      throw new NotFoundException(`Category with name "${name}" not found.`);
     }
+
+    await this.categoryService.deleteCategory(name);
+    return `Category with name "${name}" was successfully deleted.`; // Retourner un message de confirmation
   }
 }

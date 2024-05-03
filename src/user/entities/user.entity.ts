@@ -35,6 +35,10 @@ export class User {
   @Field()
   phoneNumber: string;
 
+  @Column()
+  @Field()
+  roles: string;
+
   @OneToMany(() => Product, (product) => product.user)
   @Field(() => [Product])
   products: Product[];
@@ -46,9 +50,6 @@ export class User {
   @OneToMany(() => Category, (category) => category.user)
   @Field(() => [Category])
   categories: Category[];
-  @Column()
-  @Field()
-  roles: string;
 
   @ManyToMany(() => Product, (product) => product.likedBy)
   @Field(() => [Product], { nullable: true })

@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
@@ -18,8 +19,9 @@ import { ProductStatus } from './product-status.enum';
 export class ProductService {
   constructor(
     @InjectRepository(Product)
-    private productRepository: Repository<Product>,
     private userService: UserService,
+    @InjectRepository(Product) private productRepository: Repository<Product>,
+    @InjectRepository(User) private userRepository: Repository<User>,
     private categoryService: CategoryService,
   ) {}
 
@@ -183,46 +185,67 @@ export class ProductService {
     return product;
   }
 
-  async likeProduct(id: string, user: User): Promise<Product> {
+  async likeProduct(productId: string, userId: string): Promise<Product> {
     const product = await this.productRepository.findOne({
-      where: { id },
-      relations: ['likedBy'],
+      where: { id: productId },
+      relations: ['likedBy', 'user'],
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+      throw new NotFoundException('Product not found');
     }
 
-    const hasLiked = product.likedBy.some((u) => u.id === user.id);
-    if (hasLiked) {
-      throw new Error('You have already liked this product');
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
-    product.likedBy.push(user); // Add user to likedBy
-    product.nbrLike += 1; // Increment like count
+    if (user.id.toString() === userId) {
+      throw new UnauthorizedException('You cannot like your own product');
+    }
+    const alreadyLiked = product.likedBy?.some(
+      (u) => u.id.toString() === userId,
+    );
+
+    if (alreadyLiked) {
+      throw new Error('Product already liked by this user');
+    }
+
+    product.likedBy.push(user);
+    product.nbrLike += 1;
 
     await this.productRepository.save(product);
 
     return product;
   }
 
-  async dislikeProduct(id: string, user: User): Promise<Product> {
+  async dislikeProduct(productId: string, userId: string): Promise<Product> {
     const product = await this.productRepository.findOne({
-      where: { id },
+      where: { id: productId },
       relations: ['likedBy'],
     });
 
     if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+      throw new NotFoundException('Product not found');
     }
 
-    const userIndex = product.likedBy.findIndex((u) => u.id === user.id);
-    if (userIndex === -1) {
-      throw new Error('You have not liked this product yet');
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
-    product.likedBy.splice(userIndex, 1); // Remove user from likedBy
-    product.nbrLike -= 1; // Decrement like count
+    const alreadyLiked = product.likedBy?.some(
+      (u) => u.id.toString() === userId,
+    );
+
+    if (!alreadyLiked) {
+      throw new Error('Product not liked by this user');
+    }
+
+    product.likedBy = product.likedBy.filter((u) => u.id.toString() !== userId);
+    product.nbrLike -= 1;
 
     await this.productRepository.save(product);
 

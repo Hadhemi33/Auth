@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCategoryInput } from './dto/create-category.input';
@@ -10,6 +11,7 @@ import { Category } from './entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { Product } from 'src/product/entities/product.entity';
 
 @Injectable()
 export class CategoryService {
@@ -17,7 +19,18 @@ export class CategoryService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
   ) {}
+  // async onModuleInit() {
+  //   // Ensure default category exists
+  //   const existingCategory = await this.categoryRepository.findOne({
+  //     where: { name: 'Uncategorized' },
+  //   });
 
+  //   if (!existingCategory) {
+  //     const defaultCategory = new Category();
+  //     defaultCategory.name = 'Uncategorized';
+  //     await this.categoryRepository.save(defaultCategory);
+  //   }
+  // }
   async createCategory(
     createCategoryInput: CreateCategoryInput,
     user: User,
@@ -49,7 +62,7 @@ export class CategoryService {
   async getCategoryByName(name: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { name },
-      relations: ['user'],
+      relations: ['user', 'products'],
     });
     if (!category) {
       throw new NotFoundException(`Category with Name ${name} not found`);
@@ -64,7 +77,7 @@ export class CategoryService {
     updateCategoryInput: UpdateCategoryInput,
   ): Promise<Category> {
     const { name } = updateCategoryInput;
-    const category = await this.getCategoryByName(id);
+    const category = await this.getCategoryById(id);
 
     if (name) {
       category.name = name;
@@ -75,22 +88,50 @@ export class CategoryService {
   async deleteAllCategories(): Promise<void> {
     await this.categoryRepository.clear(); // This clears all records in the Category table
   }
+  // async deleteCategory(name: string): Promise<void> {
+  //   try {
+  //     const category = await this.categoryRepository.findOne({
+  //       where: { name },
+  //       relations: ['user'],
+  //     });
+
+  //     if (!category) {
+  //       throw new NotFoundException(`Category with name "${name}" not found.`);
+  //     }
+
+  //     console.log('Deleting category:', category); // Add debug logging
+  //     await this.categoryRepository.remove(category);
+  //   } catch (error) {
+  //     console.error('Error in deleteCategory:', error); // Add error logging
+  //     throw error; // Rethrow the error
+  //   }
+  // }
   async deleteCategory(name: string): Promise<void> {
-    try {
-      const category = await this.categoryRepository.findOne({
-        where: { name },
-        relations: ['user'],
-      });
+    // Rechercher la catégorie à supprimer
+    const category = await this.categoryRepository.findOne({
+      where: { name },
+      relations: ['products', 'user'], // Assurez-vous de charger les relations pertinentes
+    });
 
-      if (!category) {
-        throw new NotFoundException(`Category with name "${name}" not found.`);
-      }
-
-      console.log('Deleting category:', category); // Add debug logging
-      await this.categoryRepository.remove(category);
-    } catch (error) {
-      console.error('Error in deleteCategory:', error); // Add error logging
-      throw error; // Rethrow the error
+    if (!category) {
+      throw new NotFoundException(`Category with name "${name}" not found.`);
     }
+
+    const defaultCategory = await this.categoryRepository.findOne({
+      where: { name: 'Uncategorized' },
+    });
+
+    if (!defaultCategory) {
+      throw new InternalServerErrorException('Default category not found');
+    }
+
+    if (category.products && category.products.length > 0) {
+      for (const product of category.products) {
+        product.category = defaultCategory;
+        await this.categoryRepository.save(product);
+      }
+    }
+
+    await this.categoryRepository.remove(category);
   }
 }

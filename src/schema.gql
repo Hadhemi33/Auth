@@ -2,11 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type SpecialProduct {
+  title: String!
+  price: String!
+  description: String!
+  discount: Float!
+  time: String!
+  category: Category!
+}
+
 type Category {
   id: String!
   name: String!
   user: User!
   products: [Product!]!
+  specialProducts: [SpecialProduct!]!
 }
 
 type Order {
@@ -26,6 +36,7 @@ type User {
   phoneNumber: String!
   roles: String!
   products: [Product!]!
+  specialProducts: [SpecialProduct!]!
   orders: [Order!]!
   categories: [Category!]!
   likedProducts: [Product!]
@@ -96,12 +107,13 @@ type Mutation {
   addProductToOrder(productId: String!, orderId: String): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(id: String!): Boolean!
+  createSpecialProduct(createSpecialProductInput: CreateSpecialProductInput!): SpecialProduct!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-03T14:47:27.311Z"
+  createdAt: String! = "2024-05-04T01:16:27.681Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -154,4 +166,13 @@ input UpdateOrderInput {
   id: String!
   totalPrice: String
   paid: Boolean
+}
+
+input CreateSpecialProductInput {
+  title: String!
+  price: String!
+  description: String!
+  discount: Float!
+  time: String!
+  categoryId: String!
 }

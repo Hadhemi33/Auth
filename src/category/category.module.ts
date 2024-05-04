@@ -8,17 +8,19 @@ import { Product } from 'src/product/entities/product.entity';
 import { UserService } from 'src/user/user.service';
 import { Order } from 'src/order/entities/order.entity';
 import { ProductService } from 'src/product/product.service';
+import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { SpecialProductService } from 'src/special-product/special-product.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Category,
-      
-      User,
-      Product,
-      Order,
-    ]),
+    TypeOrmModule.forFeature([Category, SpecialProduct, User, Product, Order]),
   ],
-  providers: [CategoryResolver, CategoryService, UserService, ProductService],
+  providers: [
+    CategoryResolver,
+    CategoryService,
+    UserService,
+    ProductService,
+    SpecialProductService,
+  ],
 })
 export class CategoryModule {}

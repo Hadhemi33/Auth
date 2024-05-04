@@ -12,6 +12,8 @@ import { AuthModule } from 'src/auth/auth.module';
 import { UserModule } from 'src/user/user.module';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { SpecialProductService } from 'src/special-product/special-product.service';
 
 @Module({
   imports: [

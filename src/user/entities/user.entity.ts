@@ -5,6 +5,7 @@ import { Chat } from 'src/chat/entities/chat.entity';
 import { Order } from 'src/order/entities/order.entity';
 
 import { Product } from 'src/product/entities/product.entity';
+import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import {
   Column,
   Entity,
@@ -42,6 +43,10 @@ export class User {
   @OneToMany(() => Product, (product) => product.user)
   @Field(() => [Product])
   products: Product[];
+  
+  @OneToMany(() => SpecialProduct, (specialProduct) => specialProduct.user)
+  @Field(() => [SpecialProduct])
+  specialProducts: SpecialProduct[];
 
   @OneToMany(() => Order, (order) => order.user)
   @Field(() => [Order])

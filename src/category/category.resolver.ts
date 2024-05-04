@@ -19,8 +19,8 @@ export class CategoryResolver {
   ) {}
 
   @Mutation(() => Category)
-  // @UseGuards(JwtAuthGuard, RoleGuard)
-  // @SetMetadata('roles', ['user'])
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['admin'])
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 

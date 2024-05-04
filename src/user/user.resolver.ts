@@ -15,7 +15,8 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { Product } from 'src/product/entities/product.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';
+import { SetMetadata, UseGuards } from '@nestjs/common';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -32,7 +33,8 @@ export class UserResolver {
     return this.usersService.getUser(id);
   }
   @Query(() => [User])
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['admin'])
   async getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();
   }

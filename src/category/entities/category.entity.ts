@@ -1,6 +1,7 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { Order } from 'src/order/entities/order.entity';
 import { Product } from 'src/product/entities/product.entity';
+import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -37,4 +38,15 @@ export class Category {
   // @OneToMany(() => Product, (product) => product.category)
   // @Field(() => [Product])
   // products: Product[];
+
+  @OneToMany(
+    () => SpecialProduct,
+    (specialProduct) => specialProduct.category,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @Field(() => [SpecialProduct])
+  specialProducts: SpecialProduct[];
 }

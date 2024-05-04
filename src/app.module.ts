@@ -17,6 +17,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace';
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 import { JwtService } from '@nestjs/jwt';
+import { SpecialProductModule } from './special-product/special-product.module';
 @Module({
   imports: [
     // ServeStaticModule.forRoot({
@@ -67,6 +68,7 @@ import { JwtService } from '@nestjs/jwt';
     AuthModule,
     CategoryModule,
     OrderModule,
+    SpecialProductModule,
     // ChatModule,
 
     // EventsModule,

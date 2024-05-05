@@ -33,8 +33,8 @@ export class UserResolver {
     return this.usersService.getUser(id);
   }
   @Query(() => [User])
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @SetMetadata('roles', ['admin'])
+  @UseGuards(JwtAuthGuard)
+  // @SetMetadata('roles', ['admin'])
   async getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();
   }

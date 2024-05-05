@@ -3,12 +3,18 @@
 # ------------------------------------------------------
 
 type SpecialProduct {
+  id: ID!
   title: String!
   price: String!
   description: String!
+  createdAt: String!
+  imageUrl: String
+  nbrLike: Int!
   discount: Float!
-  time: String!
-  category: Category!
+  endingIn: String!
+  category: Category
+  user: User!
+  likedBy: [User!]
 }
 
 type Category {
@@ -40,6 +46,7 @@ type User {
   orders: [Order!]!
   categories: [Category!]!
   likedProducts: [Product!]
+  likedSpecialProducts: [SpecialProduct!]
 }
 
 type Product {
@@ -49,7 +56,8 @@ type Product {
   price: String!
   status: String!
   createdAt: String!
-  category: Category!
+  user: User!
+  category: Category
   imageUrl: String
   nbrLike: Int!
   likedBy: [User!]
@@ -87,6 +95,7 @@ type Query {
   getAllCategories: [Category!]!
   getOrderById(id: String!): Order!
   getAllOrders: [Order!]!
+  getAllSpecialProducts(userId: String, title: String, price: String, categoryId: String): [SpecialProduct!]!
 }
 
 type Mutation {
@@ -108,12 +117,13 @@ type Mutation {
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   deleteOrder(id: String!): Boolean!
   createSpecialProduct(createSpecialProductInput: CreateSpecialProductInput!): SpecialProduct!
+  updateSpecialProduct(updateSpecialProductInput: UpdateSpecialProductInput!): SpecialProduct!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-04T01:16:27.681Z"
+  createdAt: String! = "2024-05-05T01:25:18.142Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -172,7 +182,23 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
+  createdAt: String! = "2024-05-05T01:25:18.558Z"
   discount: Float!
-  time: String!
+  endingIn: String!
   categoryId: String!
+  imageUrl: String
+}
+
+input UpdateSpecialProductInput {
+  title: String
+  price: String!
+  description: String!
+  createdAt: String = "2024-05-05T01:25:18.558Z"
+  discount: Float
+  endingIn: String
+  categoryId: String
+  imageUrl: String
+  id: ID!
+  quantity: Float
+  nbrLike: Float
 }

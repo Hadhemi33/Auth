@@ -57,6 +57,14 @@ export class ProductService {
 
       // Save the product, ensuring the category relationship is persisted
       const savedProduct = await this.productRepository.save(newProduct);
+      //push the product to the user
+      user.products.push(savedProduct);
+      await this.userRepository.save(
+        user,
+      ); /* Save the user to the database */
+     
+
+
 
       return savedProduct;
     } catch (error) {
@@ -121,13 +129,18 @@ export class ProductService {
   async deleteProduct(id: string, user: User): Promise<Product> {
     const productFound: Product = await this.getProductUserById(id, user);
     const removedProductId = productFound.id;
-    const result: Product = await this.productRepository.remove(productFound);
+    if (user.roles === 'admin' || user.id === productFound.user.id) {
+      const result: Product = await this.productRepository.remove(productFound);
 
-    if (!result) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+      if (!result) {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+      result.id = removedProductId;
+      return result;
     }
-    result.id = removedProductId;
-    return result;
+    throw new UnauthorizedException(
+      'You are not authorized to delete this product',
+    );
   }
   ///////////////////////////getProductById/////////////////////////
 

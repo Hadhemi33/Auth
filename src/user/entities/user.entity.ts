@@ -9,6 +9,7 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -40,11 +41,11 @@ export class User {
   @Field()
   roles: string;
 
-  @OneToMany(() => Product, (product) => product.user)
+  @OneToMany(() => Product, (product) => product.user, { eager: true })
   @Field(() => [Product])
   products: Product[];
-  
-  @OneToMany(() => SpecialProduct, (specialProduct) => specialProduct.user)
+
+  @OneToMany(() => SpecialProduct, (specialProduct) => specialProduct.user, { eager: true })
   @Field(() => [SpecialProduct])
   specialProducts: SpecialProduct[];
 
@@ -59,4 +60,8 @@ export class User {
   @ManyToMany(() => Product, (product) => product.likedBy)
   @Field(() => [Product], { nullable: true })
   likedProducts?: Product[];
+
+  @ManyToMany(() => SpecialProduct, (specialProduct) => specialProduct.likedBy)
+  @Field(() => [SpecialProduct], { nullable: true })
+  likedSpecialProducts?: SpecialProduct[];
 }

@@ -1,8 +1,29 @@
+import { IsEnum, Length } from 'class-validator';
 import { CreateSpecialProductInput } from './create-special-product.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, Int, PartialType, ID } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateSpecialProductInput extends PartialType(CreateSpecialProductInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateSpecialProductInput extends PartialType(
+  CreateSpecialProductInput,
+) {
+  @Field(() => ID)
+  id: string;
+  @Field({ nullable: true })
+  @Length(3, 100)
+  title?: string;
+
+  @Field()
+  description?: string;
+
+  @Field()
+  price?: string;
+
+  @Field({ nullable: true })
+  quantity?: number;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Field({ nullable: true })
+  nbrLike: number;
 }

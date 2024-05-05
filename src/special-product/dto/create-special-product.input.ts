@@ -12,13 +12,16 @@ export class CreateSpecialProductInput {
 
   @Field()
   description: string;
-
+  @Field({ defaultValue: new Date().toISOString() })
+  createdAt: string;
   @Field(() => Float)
   discount: number;
 
   @Field()
-  time: string;
+  endingIn: string;
 
   @Field()
   categoryId: string;
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

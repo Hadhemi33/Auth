@@ -35,9 +35,6 @@ export class Category {
   })
   @Field(() => [Product])
   products: Product[];
-  // @OneToMany(() => Product, (product) => product.category)
-  // @Field(() => [Product])
-  // products: Product[];
 
   @OneToMany(
     () => SpecialProduct,

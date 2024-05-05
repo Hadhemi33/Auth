@@ -43,16 +43,19 @@ export class Product {
 
   @ManyToOne(() => User, (user) => user.products)
   @JoinColumn({ name: 'userId' })
-  // @Field(() => User)
+  @Field(() => User)
   user: User;
 
   @ManyToOne(() => Order, (order) => order.products)
   @JoinColumn({ name: 'orderId' })
   order: Order;
 
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'categoryId' })
-  @Field(() => Category, { nullable: false }) // Ensure it's marked as non-nullable in the schema
+  @Field(() => Category, { nullable: true })
   category: Category;
 
   @Column({ nullable: true })

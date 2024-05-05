@@ -10,9 +10,10 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { join } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { SetMetadata, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -23,7 +24,8 @@ export class ProductResolver {
   ) {}
 
   @Mutation(() => Product)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['user'])
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
     @Context() context,
@@ -90,14 +92,33 @@ export class ProductResolver {
     return this.productService.updateProduct(updateProductInput, user);
   }
 
+  // @Mutation(() => Product)
+  // @UseGuards(JwtAuthGuard, RoleGuard)
+  // @SetMetadata('roles', ['admin'])
+  // async deleteProduct(
+  //   @CurrentUser() user: User,
+  //   @Args('id', { type: () => String }) id: string,
+  // ): Promise<Product> {
+
+  //   return this.productService.deleteProduct(id, user);
+  // }
+
   @Mutation(() => Product)
+  @UseGuards(JwtAuthGuard)
   async deleteProduct(
     @CurrentUser() user: User,
     @Args('id', { type: () => String }) id: string,
   ): Promise<Product> {
-    return this.productService.deleteProduct(id, user);
-  }
+    const product = await this.productService.getProductById(id);
 
+    if (user.roles === 'admin' || user.id === product.user.id) {
+      return this.productService.deleteProduct(id, user);
+    } else {
+      throw new UnauthorizedException(
+        'You are not authorized to delete this product',
+      );
+    }
+  }
   @Mutation(() => Product)
   async likeProduct(
     @Args({ name: 'productId', type: () => ID }) productId: string,

@@ -52,7 +52,7 @@ export class CategoryService {
   async getCategoryById(id: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
-      relations: ['user', 'products'],
+      relations: ['user', 'products', 'specialProducts'],
     });
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -62,7 +62,7 @@ export class CategoryService {
   async getCategoryByName(name: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { name },
-      relations: ['user', 'products'],
+      relations: ['user', 'products', 'specialProducts'],
     });
     if (!category) {
       throw new NotFoundException(`Category with Name ${name} not found`);
@@ -70,7 +70,9 @@ export class CategoryService {
     return category;
   }
   async getAllCategories(): Promise<Category[]> {
-    return this.categoryRepository.find({ relations: ['user', 'products'] });
+    return this.categoryRepository.find({
+      relations: ['user', 'products', 'specialProducts'],
+    });
   }
   async updateCategory(
     id: string,
@@ -110,7 +112,7 @@ export class CategoryService {
     // Rechercher la catégorie à supprimer
     const category = await this.categoryRepository.findOne({
       where: { name },
-      relations: ['products', 'user'], // Assurez-vous de charger les relations pertinentes
+      relations: ['products', 'user', 'specialProducts'], // Assurez-vous de charger les relations pertinentes
     });
 
     if (!category) {
@@ -129,6 +131,12 @@ export class CategoryService {
       for (const product of category.products) {
         product.category = defaultCategory;
         await this.categoryRepository.save(product);
+      }
+    }
+    if (category.specialProducts && category.specialProducts.length > 0) {
+      for (const specialProduct of category.specialProducts) {
+        specialProduct.category = defaultCategory;
+        await this.categoryRepository.save(specialProduct);
       }
     }
 

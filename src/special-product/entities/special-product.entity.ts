@@ -1,10 +1,12 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { Category } from 'src/category/entities/category.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -12,7 +14,8 @@ import {
 @ObjectType('SpecialProduct')
 export class SpecialProduct {
   @PrimaryGeneratedColumn()
-  id: number;
+  @Field(() => ID)
+  id: string;
 
   @Column()
   @Field()
@@ -28,17 +31,49 @@ export class SpecialProduct {
 
   @Column()
   @Field()
+  createdAt: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageUrl: string;
+
+  @Column({ type: 'int', default: 0 })
+  @Field(() => Int, { nullable: false })
+  nbrLike: number;
+
+  @Column()
+  @Field()
   discount: number;
 
   @Column()
   @Field()
-  time: string;
-  @ManyToOne(() => Category, (category) => category.specialProducts)
+  endingIn: string;
+
+  // @ManyToOne(() => Category, (category) => category.specialProducts)
+  // @JoinColumn({ name: 'categoryId' })
+  // @Field(() => Category, { nullable: false })
+  // category: Category;
+
+  @ManyToOne(() => Category, (category) => category.specialProducts, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'categoryId' })
-  @Field(() => Category, { nullable: false }) // Ensure it's marked as non-nullable in the schema
+  @Field(() => Category, { nullable: true })
   category: Category;
+
   @ManyToOne(() => User, (user) => user.specialProducts)
   @JoinColumn({ name: 'userId' })
-  // @Field(() => User)
+  @Field(() => User)
   user: User;
+
+  @ManyToMany(() => User, (user) => user.likedSpecialProducts, {
+    cascade: true,
+  })
+  @JoinTable({
+    name: 'special_product_likes',
+    joinColumn: { name: 'specialProductId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
+  })
+  @Field(() => [User], { nullable: true })
+  likedBy?: User[];
 }

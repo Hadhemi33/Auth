@@ -1,12 +1,13 @@
-// special-product.resolver.ts
 import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { SpecialProductService } from './special-product.service';
 import { SpecialProduct } from './entities/special-product.entity';
 import { CreateSpecialProductInput } from './dto/create-special-product.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { Product } from 'src/product/entities/product.entity';
+
 import { User } from 'src/user/entities/user.entity';
+import { CurrentUser } from 'src/auth/get-current-user.decorator';
+import { UpdateSpecialProductInput } from './dto/update-special-product.input';
 
 @Resolver(() => SpecialProduct)
 export class SpecialProductResolver {
@@ -20,11 +21,39 @@ export class SpecialProductResolver {
   ): Promise<SpecialProduct> {
     const user: User = context.req.user;
     if (!user) {
-      throw new Error('You must be signed in to create a product');
+      throw new Error('You must be signed in to create a Special product');
     }
 
     return this.specialProductService.createSpecialProduct(
       createSpecialProductInput,
+      user,
+    );
+  }
+  @Query(() => [SpecialProduct])
+  // @UseGuards(JwtAuthGuard) //works
+  async getAllSpecialProducts(
+    @Args('userId', { type: () => String, nullable: true }) userId?: string,
+    @Args('title', { type: () => String, nullable: true }) title?: string,
+    @Args('price', { type: () => String, nullable: true }) price?: string,
+    @Args('categoryId', { type: () => String, nullable: true })
+    categoryId?: string,
+  ): Promise<SpecialProduct[]> {
+    return this.specialProductService.getAllSpecialProducts(
+      userId,
+      categoryId,
+      title,
+      price,
+    );
+  }
+  @Mutation(() => SpecialProduct)
+  @UseGuards(JwtAuthGuard)
+  async updateSpecialProduct(
+    @CurrentUser() user: User,
+    @Args('updateSpecialProductInput')
+    updateSpecialProductInput: UpdateSpecialProductInput,
+  ): Promise<SpecialProduct> {
+    return this.specialProductService.updateSpecialProduct(
+      updateSpecialProductInput,
       user,
     );
   }

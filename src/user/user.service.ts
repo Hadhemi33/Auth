@@ -55,6 +55,7 @@ export class UserService {
     }
     return user;
   }
+
   async getAllUsers(): Promise<User[]> {
     const users = await this.usersRepository.find();
     if (users.length === 0) {
@@ -78,7 +79,7 @@ export class UserService {
       relations: ['products', 'categories', 'orders'],
     });
     if (!user) {
-      throw new NotFoundException('User n found');
+      throw new NotFoundException('Sorry but User not found');
     }
     return user;
   }
@@ -121,5 +122,26 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException();
     }
+  }
+  async updateUserRole(updateUserInput: UpdateUserInput): Promise<User> {
+    const user = await this.getUser(updateUserInput.id);
+    const { roles } = updateUserInput;
+    if (roles) {
+      user.roles = roles;
+    }
+
+    try {
+      await this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+  async getAuthUser(user: User): Promise<User> {
+    if (!user) {
+      throw new NotFoundException(`User not found.`);
+    }
+
+    return user;
   }
 }

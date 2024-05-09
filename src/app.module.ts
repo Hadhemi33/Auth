@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { CorsMiddleware } from '@nest-middlewares/cors';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
@@ -18,6 +19,7 @@ import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 import { JwtService } from '@nestjs/jwt';
 import { SpecialProductModule } from './special-product/special-product.module';
+
 @Module({
   imports: [
     // ServeStaticModule.forRoot({
@@ -26,7 +28,9 @@ import { SpecialProductModule } from './special-product/special-product.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'uploads'),
+    // }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
 
@@ -75,13 +79,24 @@ import { SpecialProductModule } from './special-product/special-product.module';
   ],
 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: 'Upload',
+    //   useValue: GraphQLUpload,
+    // },
+  ],
 })
+// export class AppModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     // Apply the upload middleware
+//     consumer
+//       .apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
+//       .forRoutes('/graphql');
+//   }
+// }
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Apply the upload middleware
-    consumer
-      .apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
-      .forRoutes('/graphql');
+    consumer.apply(CorsMiddleware).forRoutes('*');
   }
 }

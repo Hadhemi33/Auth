@@ -85,6 +85,7 @@ type Query {
   getAllProducts(userId: String, title: String, price: String, categoryId: String): [Product!]!
   getProduct(id: String!): Product!
   getUser(id: String!): User!
+  getAuthUser: User!
   getAllUsers: [User!]!
   getUserById(id: String!): User!
   getUserByEmail(email: String!): User!
@@ -100,14 +101,13 @@ type Query {
 
 type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
-  uploadProductImage(productId: ID!, file: Upload!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
-  likeProduct(productId: ID!, userId: ID!): Product!
-  dislikeProduct(productId: ID!, userId: ID!): Product!
+  deleteProductAdmin(id: String!): Product!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
   updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUserRole(updateUserInput: UpdateUserInput!): User!
   deleteUser(id: String!): Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!, id: String!): Category!
   updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): Category!
@@ -118,20 +118,19 @@ type Mutation {
   deleteOrder(id: String!): Boolean!
   createSpecialProduct(createSpecialProductInput: CreateSpecialProductInput!): SpecialProduct!
   updateSpecialProduct(updateSpecialProductInput: UpdateSpecialProductInput!): SpecialProduct!
+  deleteSpecialProduct(id: String!): SpecialProduct!
+  deleteSpeciaProductAdmin(id: String!): SpecialProduct!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-05T01:25:18.142Z"
+  createdAt: String! = "2024-05-09T18:31:05.910Z"
   description: String!
   categoryId: String!
   imageUrl: String
   quantity: Float
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input UpdateProductInput {
   id: ID!
@@ -162,6 +161,7 @@ input UpdateUserInput {
   username: String
   password: String
   phoneNumber: String
+  roles: String
 }
 
 input CreateCategoryInput {
@@ -182,7 +182,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-05T01:25:18.558Z"
+  createdAt: String! = "2024-05-09T18:31:06.463Z"
   discount: Float!
   endingIn: String!
   categoryId: String!
@@ -193,7 +193,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-05T01:25:18.558Z"
+  createdAt: String = "2024-05-09T18:31:06.463Z"
   discount: Float
   endingIn: String
   categoryId: String

@@ -13,4 +13,6 @@ export class UpdateUserInput {
   password?: string;
   @Field({ nullable: true })
   phoneNumber?: string;
+  @Field({ nullable: true })
+  roles?: string;
 }

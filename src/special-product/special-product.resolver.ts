@@ -2,12 +2,13 @@ import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
 import { SpecialProductService } from './special-product.service';
 import { SpecialProduct } from './entities/special-product.entity';
 import { CreateSpecialProductInput } from './dto/create-special-product.input';
-import { UseGuards } from '@nestjs/common';
+import { SetMetadata, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 import { User } from 'src/user/entities/user.entity';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { UpdateSpecialProductInput } from './dto/update-special-product.input';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => SpecialProduct)
 export class SpecialProductResolver {
@@ -56,5 +57,24 @@ export class SpecialProductResolver {
       updateSpecialProductInput,
       user,
     );
+  }
+
+  @Mutation(() => SpecialProduct)
+  @UseGuards(JwtAuthGuard)
+
+  // Guard to ensure user is authenticated
+  async deleteSpecialProduct(
+    @Args('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<SpecialProduct> {
+    return this.specialProductService.deleteSpecialProduct(id, user);
+  }
+  @Mutation(() => SpecialProduct)
+  @UseGuards(JwtAuthGuard) // Guard to ensure user is authenticated
+  async deleteSpeciaProductAdmin(
+    @Args('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<SpecialProduct> {
+    return this.specialProductService.deleteSpecialProductAdmin(id, user);
   }
 }

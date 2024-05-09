@@ -36,12 +36,13 @@ export class ProductService {
 
   //   return this.productRepository.save(newProduct); // Save the product to the database
   // }
+
   async create(
     createProductInput: CreateProductInput,
     user: User,
   ): Promise<Product> {
     try {
-      // Find the category by its ID
+   
       const category = await this.categoryService.getCategoryById(
         createProductInput.categoryId,
       );
@@ -59,12 +60,7 @@ export class ProductService {
       const savedProduct = await this.productRepository.save(newProduct);
       //push the product to the user
       user.products.push(savedProduct);
-      await this.userRepository.save(
-        user,
-      ); /* Save the user to the database */
-     
-
-
+      await this.userRepository.save(user); /* Save the user to the database */
 
       return savedProduct;
     } catch (error) {
@@ -126,22 +122,63 @@ export class ProductService {
 
   ///////////////////////////deleteProduct/////////////////////////
 
-  async deleteProduct(id: string, user: User): Promise<Product> {
-    const productFound: Product = await this.getProductUserById(id, user);
-    const removedProductId = productFound.id;
-    if (user.roles === 'admin' || user.id === productFound.user.id) {
-      const result: Product = await this.productRepository.remove(productFound);
+  // async deleteProduct(id: string, user: User): Promise<Product> {
+  //   const productFound: Product = await this.getProductUserById(id, user);
 
-      if (!result) {
-        throw new NotFoundException(`Product with id ${id} not found`);
+  //   const removedProductId = productFound.id;
+  //   console.log('eeeeeeeeeeeeeeeeee', user.fullName);
+
+  //   if (user.roles === 'admin' || user.id === productFound.user.id) {
+  //     const result: Product = await this.productRepository.remove(productFound);
+  //     console.log(user.fullName);
+
+  //     if (!result) {
+  //       throw new NotFoundException(`Product with id ${id} not found`);
+  //     }
+  //     result.id = removedProductId;
+  //     return result;
+  //   }
+  //   throw new UnauthorizedException(
+  //     'You are not authorized to delete this product',
+  //   );
+  // }
+  async deleteProduct(id: string, user: User): Promise<Product> {
+    try {
+      // Retrieve the product based on the provided ID and user
+      const productFound: Product = await this.getProductUserById(id, user);
+
+      // Store the ID of the product being removed
+      const removedProductId = productFound.id;
+
+      // Check if the user has the necessary permissions to delete the product
+      if (user.roles === 'admin' || user.id === productFound.user.id) {
+        // Remove the product from the database
+        const result: Product =
+          await this.productRepository.remove(productFound);
+
+        // Throw an error if the product was not found in the database
+        if (!result) {
+          throw new NotFoundException(`Product with id ${id} not found`);
+        }
+
+        // Restore the original ID of the removed product and return it
+        result.id = removedProductId;
+        return result;
+      } else {
+        // Throw an error if the user is not authorized to delete the product
+        throw new UnauthorizedException(
+          'You are not authorized to delete this product',
+        );
       }
-      result.id = removedProductId;
-      return result;
+    } catch (error) {
+      // Catch any errors that occur during the deletion process
+      console.error('Error deleting product:', error);
+      throw new InternalServerErrorException(
+        'An error occurred while deleting the product.',
+      );
     }
-    throw new UnauthorizedException(
-      'You are not authorized to delete this product',
-    );
   }
+
   ///////////////////////////getProductById/////////////////////////
 
   async getProductUserById(id: string, user: User): Promise<Product> {
@@ -198,70 +235,32 @@ export class ProductService {
     return product;
   }
 
-  async likeProduct(productId: string, userId: string): Promise<Product> {
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
-      relations: ['likedBy', 'user'],
-    });
+  async deleteProductAdmin(id: string, user: User): Promise<Product> {
+    try {
+      // Retrieve the product based on the provided ID and user
+      const productFound: Product = await this.getProductById(id);
 
-    if (!product) {
-      throw new NotFoundException('Product not found');
+      const removedProductId = productFound.id;
+
+      if (user.roles === 'admin') {
+        const result: Product =
+          await this.productRepository.remove(productFound);
+
+        if (!result) {
+          throw new NotFoundException(`Product with id ${id} not found`);
+        }
+        result.id = removedProductId;
+        return result;
+      } else {
+        throw new UnauthorizedException(
+          'You are not authorized to delete this product',
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      throw new InternalServerErrorException(
+        'An error occurred while deleting the product.',
+      );
     }
-
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (user.id.toString() === userId) {
-      throw new UnauthorizedException('You cannot like your own product');
-    }
-    const alreadyLiked = product.likedBy?.some(
-      (u) => u.id.toString() === userId,
-    );
-
-    if (alreadyLiked) {
-      throw new Error('Product already liked by this user');
-    }
-
-    product.likedBy.push(user);
-    product.nbrLike += 1;
-
-    await this.productRepository.save(product);
-
-    return product;
-  }
-
-  async dislikeProduct(productId: string, userId: string): Promise<Product> {
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
-      relations: ['likedBy'],
-    });
-
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const alreadyLiked = product.likedBy?.some(
-      (u) => u.id.toString() === userId,
-    );
-
-    if (!alreadyLiked) {
-      throw new Error('Product not liked by this user');
-    }
-
-    product.likedBy = product.likedBy.filter((u) => u.id.toString() !== userId);
-    product.nbrLike -= 1;
-
-    await this.productRepository.save(product);
-
-    return product;
   }
 }

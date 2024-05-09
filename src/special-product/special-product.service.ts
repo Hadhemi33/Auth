@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Like, Repository } from 'typeorm';
@@ -47,6 +48,15 @@ export class SpecialProductService {
         'An error occurred while creating the product.',
       );
     }
+  }
+  async getSpecialProductById(id: string): Promise<SpecialProduct> {
+    const specialproduct = await this.specialProductRepository.findOne({
+      where: { id },
+    });
+    if (!specialproduct) {
+      throw new NotFoundException(`Special Product with ID ${id} not found`);
+    }
+    return specialproduct;
   }
   async getAllSpecialProducts(
     userId?: string,
@@ -95,7 +105,10 @@ export class SpecialProductService {
       throw new InternalServerErrorException('Error fetching special products');
     }
   }
-  async getProductUserById(id: string, user: User): Promise<SpecialProduct> {
+  async getSpecalProductUserById(
+    id: string,
+    user: User,
+  ): Promise<SpecialProduct> {
     const specialProductFound = await this.specialProductRepository.findOne({
       where: { id, user },
       relations: ['user', 'category'],
@@ -110,13 +123,13 @@ export class SpecialProductService {
   async updateSpecialProductt(
     specialProduct: SpecialProduct,
   ): Promise<SpecialProduct> {
-    return this.specialProductRepository.save(specialProduct); // Update the product in the database
+    return this.specialProductRepository.save(specialProduct);
   }
   async updateSpecialProduct(
     updateSpecialProductInput: UpdateSpecialProductInput,
     user: User,
   ): Promise<SpecialProduct> {
-    const product = await this.getProductUserById(
+    const product = await this.getSpecalProductUserById(
       updateSpecialProductInput.id,
       user,
     );
@@ -139,6 +152,70 @@ export class SpecialProductService {
       return product;
     } catch (error) {
       throw new InternalServerErrorException();
+    }
+  }
+  async deleteSpecialProduct(id: string, user: User): Promise<SpecialProduct> {
+    try {
+      const productFound: SpecialProduct = await this.getSpecalProductUserById(
+        id,
+        user,
+      );
+
+      const removedProductId = productFound.id;
+
+      if (user.roles === 'admin' || user.id === productFound.user.id) {
+        const result: SpecialProduct =
+          await this.specialProductRepository.remove(productFound);
+
+        if (!result) {
+          throw new NotFoundException(`Product with id ${id} not found`);
+        }
+
+        result.id = removedProductId;
+        return result;
+      } else {
+        throw new UnauthorizedException(
+          'You are not authorized to delete this product',
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      throw new InternalServerErrorException(
+        'An error occurred while deleting the product.',
+      );
+    }
+  }
+  async deleteSpecialProductAdmin(
+    id: string,
+    user: User,
+  ): Promise<SpecialProduct> {
+    try {
+      // Retrieve the product based on the provided ID and user
+      const productFound: SpecialProduct = await this.getSpecialProductById(id);
+
+      const removedProductId = productFound.id;
+
+      if (user.roles === 'admin') {
+        const result: SpecialProduct =
+          await this.specialProductRepository.remove(productFound);
+
+        if (!result) {
+          throw new NotFoundException(
+            `Special Product with id ${id} not found`,
+          );
+        }
+        result.id = removedProductId;
+        return result;
+      } else {
+        throw new UnauthorizedException(
+          'You are not authorized to delete this Special product',
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting  Specialproduct:', error);
+      throw new InternalServerErrorException(
+        'An error occurred while deleting the Special product.',
+      );
     }
   }
 }

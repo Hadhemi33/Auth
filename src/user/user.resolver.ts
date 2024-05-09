@@ -28,12 +28,26 @@ export class UserResolver {
   ): Promise<User> {
     return this.usersService.updateUserProfile(updateUserInput);
   }
+  @Mutation(() => User)
+  async updateUserRole(
+    // @CurrentUser() user: User,
+
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    const user = this.usersService.getUser(updateUserInput.id);
+    return this.usersService.updateUserRole(updateUserInput);
+  }
   @Query(() => User)
   async getUser(@Args('id') id: string): Promise<User> {
     return this.usersService.getUser(id);
   }
-  @Query(() => [User])
   @UseGuards(JwtAuthGuard)
+  @Query(() => User)
+  async getAuthUser(@CurrentUser() user: User): Promise<User> {
+    return this.usersService.getAuthUser(user);
+  }
+  @Query(() => [User])
+  // @UseGuards(JwtAuthGuard)
   // @SetMetadata('roles', ['admin'])
   async getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();

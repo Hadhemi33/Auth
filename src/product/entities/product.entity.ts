@@ -13,6 +13,7 @@ import { ProductStatus } from '../product-status.enum';
 import { User } from 'src/user/entities/user.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { Order } from 'src/order/entities/order.entity';
+import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 
 @Entity()
 @ObjectType('Product')
@@ -46,10 +47,12 @@ export class Product {
   @Field(() => User)
   user: User;
 
-  @ManyToOne(() => Order, (order) => order.products)
+  @ManyToOne(() => Order, (order) => order.products, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'orderId' })
   order: Order;
-
+  // @ManyToOne(() => OrderHistory, (history) => history.products)
+  // @JoinColumn({ name: 'order_historyId' })
+  // history: OrderHistory;
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: 'SET NULL',
     nullable: true,
@@ -78,4 +81,11 @@ export class Product {
   @Column({ type: 'int', default: 1 })
   @Field(() => Int, { nullable: false })
   quantity: number;
+
+  @ManyToOne(() => OrderHistory, (history) => history.products, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  }) // Relationship with OrderHistory
+  @JoinColumn({ name: 'order_historyId' })
+  history: OrderHistory;
 }

@@ -35,13 +35,16 @@ export class UserResolver {
   ): Promise<User> {
     return this.usersService.updateUserProfile(updateUserInput, user);
   }
+
   @Mutation(() => User)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['admin'])
   async updateUserRole(
     @CurrentUser() user: User,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @Args('id') id: string,
   ): Promise<User> {
-    return this.usersService.updateUserRole(updateUserInput, user);
+    return this.usersService.updateUserRole(updateUserInput, id);
   }
   @Query(() => User)
   async getUser(@Args('id') id: string): Promise<User> {

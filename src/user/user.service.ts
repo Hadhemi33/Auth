@@ -168,9 +168,9 @@ export class UserService {
   }
   async updateUserRole(
     updateUserInput: UpdateUserInput,
-    user: User,
+    id: string,
   ): Promise<User> {
-    // const user = await this.getUser(user.id);
+    const user = await this.getUser(id);
     const { roles } = updateUserInput;
     if (roles) {
       user.roles = roles;

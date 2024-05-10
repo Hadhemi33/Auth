@@ -9,15 +9,18 @@ import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
 import { CategoryService } from 'src/category/category.service';
 import { Category } from 'src/category/entities/category.entity';
+import { OrderHistoryService } from 'src/order-history/order-history.service';
+import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Product, User, Category])],
+  imports: [TypeOrmModule.forFeature([Order, Product, User, Category,OrderHistory])],
   providers: [
     OrderResolver,
     OrderService,
     ProductService,
     UserService,
     CategoryService,
+    OrderHistoryService,
   ],
 })
 export class OrderModule {}

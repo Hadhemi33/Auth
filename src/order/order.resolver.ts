@@ -6,6 +6,8 @@ import { ProductService } from 'src/product/product.service';
 import { Order } from './entities/order.entity';
 
 import { UpdateOrderInput } from './dto/update-order.input';
+import { CurrentUser } from 'src/auth/get-current-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Resolver(() => Order)
 export class OrderResolver {
@@ -13,23 +15,13 @@ export class OrderResolver {
     private readonly orderService: OrderService,
     private readonly productService: ProductService,
   ) {}
-
   @Mutation(() => Order)
   @UseGuards(JwtAuthGuard)
   async addProductToOrder(
-    @Context() context,
+    @CurrentUser() user: User,
     @Args('productId', { type: () => String }) productId: string,
     @Args('orderId', { type: () => String, nullable: true }) orderId?: string,
   ): Promise<Order> {
-    const user = context.req.user;
-
-    let order: Order;
-    if (orderId) {
-      order = await this.orderService.getOrderById(orderId);
-    } else {
-      order = await this.orderService.getOrCreateOrderForUser(user.id);
-    }
-
     const product = await this.productService.getProductById(productId);
 
     if (product.order) {
@@ -38,19 +30,46 @@ export class OrderResolver {
       );
     }
 
+    // Get or create an order based on the latest unpaid order logic
+    const order = await this.orderService.getOrCreateOrderForUser(user);
+
     product.order = order;
-    await this.productService.updateProductt(product);
+    await this.productService.updateProductt(product); // This method might need fixing depending on your service implementation
 
-    if (!order.products) {
-      order.products = [];
-    }
+    order.products.push(product); // Add product to order
+    await this.orderService.updateOrder(order); // Update and save the order
 
-    order.products.push(product);
-    await this.orderService.updateOrder(order);
-
-    return order;
+    return order; // Return the updated order
   }
 
+  // @Mutation(() => Order)
+  // @UseGuards(JwtAuthGuard)
+  // async addProductToOrder(
+  //   @CurrentUser() user: User,
+  //   @Args('productId', { type: () => String }) productId: string,
+  //   @Args('orderId', { type: () => String, nullable: true }) orderId?: string,
+  // ): Promise<Order> {
+  //   let order: Order;
+
+  //   // Always create a new order for each user
+  //   order = await this.orderService.createOrderForUser(user);
+
+  //   const product = await this.productService.getProductById(productId);
+
+  //   if (product.order) {
+  //     throw new Error(
+  //       `Product with ID ${productId} is already in another order`,
+  //     );
+  //   }
+
+  //   product.order = order;
+  //   await this.productService.updateProductt(product);
+
+  //   order.products.push(product);
+  //   await this.orderService.updateOrder(order);
+
+  //   return order;
+  // }
   @Query(() => Order)
   async getOrderById(
     @Args('id', { type: () => String }) id: string,
@@ -63,6 +82,31 @@ export class OrderResolver {
     return this.orderService.findAll();
   }
 
+  @Mutation(() => Order)
+  @UseGuards(JwtAuthGuard)
+  // async updateOrder(
+  //   @Args('updateOrderInput', { type: () => UpdateOrderInput })
+  //   updateOrderInput: UpdateOrderInput,
+  // ): Promise<Order> {
+  //   const order = await this.orderService.getOrderById(updateOrderInput.id);
+
+  //   if (!order) {
+  //     throw new NotFoundException(
+  //       `Order with ID ${updateOrderInput.id} not found`,
+  //     );
+  //   }
+
+  //   if (updateOrderInput.paid !== undefined) {
+  //     order.paid = updateOrderInput.paid;
+  //     await this.orderService.updateOrder(order);
+  //     if (order.paid) {
+  //       console.log('Order is paid, deleting the order...');
+  //       await this.orderService.deleteOrder(order.id);
+  //     }
+  //   }
+
+  //   return order;
+  // }
   @Mutation(() => Order)
   @UseGuards(JwtAuthGuard)
   async updateOrder(
@@ -80,9 +124,9 @@ export class OrderResolver {
     if (updateOrderInput.paid !== undefined) {
       order.paid = updateOrderInput.paid;
       await this.orderService.updateOrder(order);
+
       if (order.paid) {
-        console.log('Order is paid, deleting the order...');
-        await this.orderService.deleteOrder(order.id);
+        await this.orderService.deleteOrderIfPaid(order); // This handles saving to history and deleting
       }
     }
 

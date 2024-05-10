@@ -10,5 +10,6 @@ export class CreateOrderDto {
 
   @Field(() => [String])
   productIds: string[];
-
+  @Field({ defaultValue: new Date().toISOString() })
+  createdAt: string;
 }

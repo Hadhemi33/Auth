@@ -19,6 +19,7 @@ import { ApolloServerPluginInlineTrace } from '@apollo/server/plugin/inlineTrace
 import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 import { JwtService } from '@nestjs/jwt';
 import { SpecialProductModule } from './special-product/special-product.module';
+import { OrderHistoryModule } from './order-history/order-history.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { SpecialProductModule } from './special-product/special-product.module';
     CategoryModule,
     OrderModule,
     SpecialProductModule,
+    OrderHistoryModule,
     // ChatModule,
 
     // EventsModule,

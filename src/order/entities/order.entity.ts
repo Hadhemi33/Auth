@@ -18,7 +18,7 @@ export class Order {
   id: string;
 
   @Column()
-  @Field()
+  @Field({ defaultValue: new Date().toISOString() })
   createdAt: string;
 
   @Column()

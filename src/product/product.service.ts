@@ -42,7 +42,6 @@ export class ProductService {
     user: User,
   ): Promise<Product> {
     try {
-   
       const category = await this.categoryService.getCategoryById(
         createProductInput.categoryId,
       );

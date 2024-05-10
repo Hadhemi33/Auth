@@ -22,20 +22,26 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 export class UserResolver {
   constructor(private usersService: UserService) {}
   @Mutation(() => User)
+  @UseGuards(JwtAuthGuard)
+  // async updateUser(
+  //   @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<User> {
+  //   return this.usersService.updateUserProfile(updateUserInput, user);
+  // }
   async updateUser(
     @CurrentUser() user: User,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User> {
-    return this.usersService.updateUserProfile(updateUserInput);
+    return this.usersService.updateUserProfile(updateUserInput, user);
   }
   @Mutation(() => User)
+  @UseGuards(JwtAuthGuard)
   async updateUserRole(
-    // @CurrentUser() user: User,
-
+    @CurrentUser() user: User,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
   ): Promise<User> {
-    const user = this.usersService.getUser(updateUserInput.id);
-    return this.usersService.updateUserRole(updateUserInput);
+    return this.usersService.updateUserRole(updateUserInput, user);
   }
   @Query(() => User)
   async getUser(@Args('id') id: string): Promise<User> {

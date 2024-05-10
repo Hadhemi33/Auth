@@ -40,12 +40,17 @@ export class User {
   @Column()
   @Field()
   roles: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageUrl: string;
 
   @OneToMany(() => Product, (product) => product.user, { eager: true })
   @Field(() => [Product])
   products: Product[];
 
-  @OneToMany(() => SpecialProduct, (specialProduct) => specialProduct.user, { eager: true })
+  @OneToMany(() => SpecialProduct, (specialProduct) => specialProduct.user, {
+    eager: true,
+  })
   @Field(() => [SpecialProduct])
   specialProducts: SpecialProduct[];
 

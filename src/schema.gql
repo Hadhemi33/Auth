@@ -41,6 +41,7 @@ type User {
   fullName: String!
   phoneNumber: String!
   roles: String!
+  imageUrl: String
   products: [Product!]!
   specialProducts: [SpecialProduct!]!
   orders: [Order!]!
@@ -70,6 +71,7 @@ type SignupResponse {
   fullName: String
   phoneNumber: String
   roles: String!
+  imageUrl: String
 }
 
 type SigninResponse {
@@ -79,6 +81,7 @@ type SigninResponse {
   fullName: String!
   phoneNumber: String!
   roles: String!
+  imageUrl: String
 }
 
 type Query {
@@ -125,7 +128,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-09T18:31:05.910Z"
+  createdAt: String! = "2024-05-10T00:32:04.508Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -148,6 +151,7 @@ input SignupUserInput {
   password: String!
   fullName: String
   phoneNumber: String
+  imageUrl: String
 }
 
 input SigninUserInput {
@@ -156,12 +160,12 @@ input SigninUserInput {
 }
 
 input UpdateUserInput {
-  id: ID!
   fullName: String
   username: String
   password: String
   phoneNumber: String
   roles: String
+  imageUrl: String
 }
 
 input CreateCategoryInput {
@@ -182,7 +186,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-09T18:31:06.463Z"
+  createdAt: String! = "2024-05-10T00:32:04.891Z"
   discount: Float!
   endingIn: String!
   categoryId: String!
@@ -193,7 +197,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-09T18:31:06.463Z"
+  createdAt: String = "2024-05-10T00:32:04.891Z"
   discount: Float
   endingIn: String
   categoryId: String

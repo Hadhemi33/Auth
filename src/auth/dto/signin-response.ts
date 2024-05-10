@@ -15,4 +15,7 @@ export class SigninResponse {
   phoneNumber: string;
   @Field()
   roles: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

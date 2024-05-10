@@ -99,13 +99,14 @@ export class AuthService {
   }
 
   async signin(user: User): Promise<SigninResponse> {
-    const { id, username, fullName, phoneNumber, roles } = user; // Consistent variable retrieval
+    const { id, username, fullName, phoneNumber, roles,imageUrl } = user; // Consistent variable retrieval
     const accessToken = this.jwtService.sign({
       sub: id,
       username,
       fullName,
       phoneNumber,
       roles,
+      imageUrl,
     });
 
     if (!accessToken) {
@@ -119,6 +120,7 @@ export class AuthService {
       username,
       roles,
       phoneNumber,
+      imageUrl,
     };
   }
 }

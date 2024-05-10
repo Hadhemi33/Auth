@@ -28,6 +28,8 @@ export class SignupUserInput {
   @Field({ nullable: true })
   phoneNumber: string;
 
+  @Field({ nullable: true })
+  imageUrl?: string;
   // @Field()
   // role: string;
 }

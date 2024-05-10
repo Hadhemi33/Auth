@@ -16,4 +16,7 @@ export class SignupResponse {
   phoneNumber: string;
   @Field()
   roles: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
 }

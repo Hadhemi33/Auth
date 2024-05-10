@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -19,19 +20,22 @@ export class UserService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
   async createUser(createUserInput: SignupUserInput): Promise<SignupResponse> {
-    const { username, password, phoneNumber, fullName } = createUserInput;
+    const { username, password, phoneNumber, fullName, imageUrl } =
+      createUserInput;
     const user = this.usersRepository.create({
       username,
       password,
       phoneNumber,
       fullName,
+      imageUrl,
       roles: 'user',
     });
     try {
       await this.usersRepository.save(user);
-      const { username, fullName, phoneNumber, id, roles } = user;
+      const { username, fullName, phoneNumber, id, roles, imageUrl } = user;
       return {
         roles,
+        imageUrl,
         id,
         phoneNumber,
         username,
@@ -104,27 +108,69 @@ export class UserService {
     return user;
   }
 
-  async updateUserProfile(updateUserInput: UpdateUserInput): Promise<User> {
-    const user = await this.getUser(updateUserInput.id);
-    const { username, fullName, phoneNumber } = updateUserInput;
+  // async updateUserProfile(
+  //   updateUserInput: UpdateUserInput,
+  //   user: User,
+  // ): Promise<User> {
+  //   const found = await this.getUser(user.id);
+  //   const { username, fullName, phoneNumber, imageUrl } = updateUserInput;
+  //   if (username) {
+  //     found.username = username;
+  //   }
+  //   if (fullName) {
+  //     found.fullName = fullName;
+  //   }
+  //   if (phoneNumber) {
+  //     found.phoneNumber = phoneNumber;
+  //   }
+  //   if (imageUrl) {
+  //     found.imageUrl = imageUrl;
+  //   }
+  //   try {
+  //     await this.usersRepository.save(found);
+  //     return found;
+  //   } catch (error) {
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
+  async updateUserProfile(
+    updateUserInput: UpdateUserInput,
+    user: User,
+  ): Promise<User> {
+    if (!updateUserInput || !user) {
+      throw new BadRequestException('Invalid input or user');
+    }
+
+    const found = await this.getUser(user.id);
+
+    const { username, fullName, phoneNumber, imageUrl } = updateUserInput;
+
     if (username) {
-      user.username = username;
+      found.username = username.trim();
     }
     if (fullName) {
-      user.fullName = fullName;
+      found.fullName = fullName.trim();
     }
     if (phoneNumber) {
-      user.phoneNumber = phoneNumber;
+      found.phoneNumber = phoneNumber.trim();
     }
+    if (imageUrl) {
+      found.imageUrl = imageUrl.trim();
+    }
+
     try {
-      await this.usersRepository.save(user);
-      return user;
+      await this.usersRepository.save(found);
+      return found;
     } catch (error) {
-      throw new InternalServerErrorException();
+      console.error('Error updating user profile:', error);
+      throw new InternalServerErrorException('Error saving user profile');
     }
   }
-  async updateUserRole(updateUserInput: UpdateUserInput): Promise<User> {
-    const user = await this.getUser(updateUserInput.id);
+  async updateUserRole(
+    updateUserInput: UpdateUserInput,
+    user: User,
+  ): Promise<User> {
+    // const user = await this.getUser(user.id);
     const { roles } = updateUserInput;
     if (roles) {
       user.roles = roles;

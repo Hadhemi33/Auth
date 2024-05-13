@@ -71,7 +71,7 @@ export class Product {
 
   @ManyToMany(() => User, (user) => user.likedProducts, { cascade: true })
   @JoinTable({
-    name: 'product_likes', // Custom join table name
+    name: 'product_likes',
     joinColumn: { name: 'productId', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
   })
@@ -85,7 +85,7 @@ export class Product {
   @ManyToOne(() => OrderHistory, (history) => history.products, {
     cascade: true,
     onDelete: 'CASCADE',
-  }) // Relationship with OrderHistory
+  })
   @JoinColumn({ name: 'order_historyId' })
   history: OrderHistory;
 }

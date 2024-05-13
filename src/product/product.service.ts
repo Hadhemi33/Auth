@@ -53,12 +53,11 @@ export class ProductService {
 
       const newProduct = this.productRepository.create(createProductInput);
       newProduct.user = user;
-      newProduct.category = category; 
-      
+      newProduct.category = category;
 
       const savedProduct = await this.productRepository.save(newProduct);
       user.products.push(savedProduct);
-      await this.userRepository.save(user); 
+      await this.userRepository.save(user);
 
       return savedProduct;
     } catch (error) {
@@ -69,7 +68,6 @@ export class ProductService {
     }
   }
 
-  ///////////////////////////getAllProducts/////////////////////////
   async getAllProducts(
     userId?: string,
     categoryId?: string,

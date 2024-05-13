@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type SpecialProductPrice {
+  id: ID!
+  price: String!
+  specialProduct: SpecialProduct!
+  user: User!
+}
+
 type SpecialProduct {
   id: ID!
   title: String!
@@ -15,6 +22,7 @@ type SpecialProduct {
   category: Category
   user: User!
   likedBy: [User!]
+  prices: [SpecialProductPrice!]!
 }
 
 type Category {
@@ -62,6 +70,7 @@ type User {
   categories: [Category!]!
   likedProducts: [Product!]
   likedSpecialProducts: [SpecialProduct!]
+  specialProductPrices: [SpecialProductPrice!]!
 }
 
 type Product {
@@ -115,6 +124,8 @@ type Query {
   getAllOrders: [Order!]!
   getAllSpecialProducts(userId: String, title: String, price: String, categoryId: String): [SpecialProduct!]!
   getAllOrderHistory: [OrderHistory!]!
+  specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
+  AllspecialProductPrices: [SpecialProductPrice!]!
 }
 
 type Mutation {
@@ -138,12 +149,15 @@ type Mutation {
   updateSpecialProduct(updateSpecialProductInput: UpdateSpecialProductInput!): SpecialProduct!
   deleteSpecialProduct(id: String!): SpecialProduct!
   deleteSpeciaProductAdmin(id: String!): SpecialProduct!
+  createSpecialProductPrice(createSpecialProductPriceInput: CreateSpecialProductPriceInput!): SpecialProductPrice!
+  updateSpecialProductPrice(updateSpecialProductPriceInput: UpdateSpecialProductPriceInput!): SpecialProductPrice!
+  deleteAllSpecialProductPrices: String!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-13T08:31:46.156Z"
+  createdAt: String! = "2024-05-13T17:11:54.293Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -201,7 +215,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-13T08:31:46.820Z"
+  createdAt: String! = "2024-05-13T17:11:54.639Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -212,7 +226,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-13T08:31:46.820Z"
+  createdAt: String = "2024-05-13T17:11:54.639Z"
   discount: String
   endingIn: String
   categoryId: String
@@ -220,4 +234,17 @@ input UpdateSpecialProductInput {
   id: ID!
   quantity: Float
   nbrLike: Float
+}
+
+input CreateSpecialProductPriceInput {
+  specialProductId: ID!
+  userId: String
+  price: String!
+}
+
+input UpdateSpecialProductPriceInput {
+  specialProductId: ID
+  userId: String
+  price: String
+  id: ID!
 }

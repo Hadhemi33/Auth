@@ -20,6 +20,7 @@ import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload';
 import { JwtService } from '@nestjs/jwt';
 import { SpecialProductModule } from './special-product/special-product.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
+import { SpecialProductPriceModule } from './special-product-price/special-product-price.module';
 
 @Module({
   imports: [
@@ -75,6 +76,8 @@ import { OrderHistoryModule } from './order-history/order-history.module';
     OrderModule,
     SpecialProductModule,
     OrderHistoryModule,
+    SpecialProductPriceModule,
+
     // ChatModule,
 
     // EventsModule,

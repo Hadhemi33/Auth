@@ -1,5 +1,6 @@
 // special-product.service.ts
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -12,6 +13,7 @@ import { CreateSpecialProductInput } from './dto/create-special-product.input';
 import { User } from 'src/user/entities/user.entity';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateSpecialProductInput } from './dto/update-special-product.input';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SpecialProductService {
@@ -19,8 +21,9 @@ export class SpecialProductService {
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
     private categoryService: CategoryService,
+    private userService: UserService,
   ) {}
-
+  
   async createSpecialProduct(
     createSpecialProductInput: CreateSpecialProductInput,
     user: User,

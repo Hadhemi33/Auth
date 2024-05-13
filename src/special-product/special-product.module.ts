@@ -11,12 +11,26 @@ import { Order } from 'src/order/entities/order.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { CategoryService } from 'src/category/category.service';
 
+import { CategoryModule } from 'src/category/category.module';
+import { UserService } from 'src/user/user.service';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([SpecialProduct, User, Category]),
     forwardRef(() => AuthModule),
+    CategoryModule,
     UserModule,
   ],
-  providers: [SpecialProductResolver, CategoryService, SpecialProductService],
+  providers: [
+    SpecialProductResolver,
+    CategoryService,
+    UserService,
+    AuthService,
+    JwtService,
+
+    SpecialProductService,
+  ],
 })
 export class SpecialProductModule {}

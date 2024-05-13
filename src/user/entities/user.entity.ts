@@ -6,6 +6,7 @@ import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 import { Order } from 'src/order/entities/order.entity';
 
 import { Product } from 'src/product/entities/product.entity';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import {
   Column,
@@ -73,4 +74,9 @@ export class User {
   @ManyToMany(() => SpecialProduct, (specialProduct) => specialProduct.likedBy)
   @Field(() => [SpecialProduct], { nullable: true })
   likedSpecialProducts?: SpecialProduct[];
+
+  
+  @OneToMany(() => SpecialProductPrice, (price) => price.user)
+  @Field(() => [SpecialProductPrice])
+  specialProductPrices: SpecialProductPrice[];
 }

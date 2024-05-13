@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { Category } from 'src/category/entities/category.entity';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -8,6 +9,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 @Entity()
@@ -48,11 +50,6 @@ export class SpecialProduct {
   @Field()
   endingIn: string;
 
-  // @ManyToOne(() => Category, (category) => category.specialProducts)
-  // @JoinColumn({ name: 'categoryId' })
-  // @Field(() => Category, { nullable: false })
-  // category: Category;
-
   @ManyToOne(() => Category, (category) => category.specialProducts, {
     onDelete: 'SET NULL',
     nullable: true,
@@ -76,4 +73,8 @@ export class SpecialProduct {
   })
   @Field(() => [User], { nullable: true })
   likedBy?: User[];
+
+  @OneToMany(() => SpecialProductPrice, (price) => price.specialProduct)
+  @Field(() => [SpecialProductPrice])
+  prices: SpecialProductPrice[];
 }

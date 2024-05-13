@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Context, ID } from '@nestjs/graphql';
 import { SpecialProductService } from './special-product.service';
 import { SpecialProduct } from './entities/special-product.entity';
 import { CreateSpecialProductInput } from './dto/create-special-product.input';
@@ -13,6 +13,7 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 @Resolver(() => SpecialProduct)
 export class SpecialProductResolver {
   constructor(private readonly specialProductService: SpecialProductService) {}
+
   @Mutation(() => SpecialProduct)
   @UseGuards(JwtAuthGuard)
   async createSpecialProduct(
@@ -32,7 +33,7 @@ export class SpecialProductResolver {
     );
   }
   @Query(() => [SpecialProduct])
-  // @UseGuards(JwtAuthGuard) //works
+  // // @UseGuards(JwtAuthGuard) //works
   async getAllSpecialProducts(
     @Args('userId', { type: () => String, nullable: true }) userId?: string,
     @Args('title', { type: () => String, nullable: true }) title?: string,

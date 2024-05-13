@@ -21,6 +21,7 @@ export class SpecialProductResolver {
     @Context() context,
   ): Promise<SpecialProduct> {
     const user: User = context.req.user;
+
     if (!user) {
       throw new Error('You must be signed in to create a Special product');
     }

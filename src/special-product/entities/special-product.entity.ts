@@ -42,7 +42,7 @@ export class SpecialProduct {
 
   @Column()
   @Field()
-  discount: number;
+  discount: string;
 
   @Column()
   @Field()

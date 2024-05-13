@@ -14,8 +14,10 @@ export class CreateSpecialProductInput {
   description: string;
   @Field({ defaultValue: new Date().toISOString() })
   createdAt: string;
-  @Field(() => Float)
-  discount: number;
+  @Field()
+
+  // @Field(() => Float)
+  discount: string;
 
   @Field()
   endingIn: string;

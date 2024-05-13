@@ -23,12 +23,6 @@ export class UserResolver {
   constructor(private usersService: UserService) {}
   @Mutation(() => User)
   @UseGuards(JwtAuthGuard)
-  // async updateUser(
-  //   @Args('updateUserInput') updateUserInput: UpdateUserInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<User> {
-  //   return this.usersService.updateUserProfile(updateUserInput, user);
-  // }
   async updateUser(
     @CurrentUser() user: User,
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
@@ -99,6 +93,8 @@ export class UserResolver {
 
     return user.categories;
   }
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @SetMetadata('roles', ['admin'])
   @Mutation(() => Boolean)
   async deleteUser(@Args('id') id: string): Promise<boolean> {
     try {

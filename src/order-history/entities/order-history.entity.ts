@@ -20,10 +20,14 @@ export class OrderHistory {
   @Column()
   totalPrice: string;
 
-  @Field()
-  @ManyToOne(() => User, { eager: true })
-  @JoinColumn({ name: 'user_id' })
+  // @Field()
+  // @ManyToOne(() => User, { eager: true })
+  // @JoinColumn({ name: 'user_id' })
+  // user: User;
+  @ManyToOne(() => User, (user) => user.OrderHistories)
+  @Field(() => User)
   user: User;
+
   @Field()
   @Column()
   paidAt: Date;

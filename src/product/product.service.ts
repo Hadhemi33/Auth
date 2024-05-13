@@ -53,13 +53,12 @@ export class ProductService {
 
       const newProduct = this.productRepository.create(createProductInput);
       newProduct.user = user;
-      newProduct.category = category; // Assign the category to the product
+      newProduct.category = category; 
+      
 
-      // Save the product, ensuring the category relationship is persisted
       const savedProduct = await this.productRepository.save(newProduct);
-      //push the product to the user
       user.products.push(savedProduct);
-      await this.userRepository.save(user); /* Save the user to the database */
+      await this.userRepository.save(user); 
 
       return savedProduct;
     } catch (error) {

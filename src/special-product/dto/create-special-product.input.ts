@@ -1,27 +1,22 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
-// import { Length } from 'class-validator';
+import { Length } from 'class-validator';
 
 @InputType()
 export class CreateSpecialProductInput {
   @Field()
-  // @length(3, 100)
+  @Length(3, 100)
   title: string;
 
   @Field()
   price: string;
-
   @Field()
   description: string;
   @Field({ defaultValue: new Date().toISOString() })
   createdAt: string;
   @Field()
-
-  // @Field(() => Float)
   discount: string;
-
   @Field()
   endingIn: string;
-
   @Field()
   categoryId: string;
   @Field({ nullable: true })

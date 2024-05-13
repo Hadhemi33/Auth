@@ -7,10 +7,15 @@ import { User } from 'src/user/entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/get-current-user.decorator';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { Repository } from 'typeorm';
 @Resolver(() => SpecialProductPrice)
 export class SpecialProductPriceResolver {
   constructor(
     private readonly specialProductPriceService: SpecialProductPriceService,
+    @InjectRepository(SpecialProduct)
+    private specialProductRepository: Repository<SpecialProduct>,
   ) {}
   @Mutation(() => SpecialProductPrice)
   @UseGuards(JwtAuthGuard)
@@ -18,12 +23,35 @@ export class SpecialProductPriceResolver {
     @Args('createSpecialProductPriceInput')
     createSpecialProductPriceInput: CreateSpecialProductPriceInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<SpecialProductPrice | Error> {
+    const specialProduct = await this.specialProductRepository.findOne({
+      where: { id: createSpecialProductPriceInput.specialProductId },
+    });
+
+    const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
+    const actualPrice = parseFloat(specialProduct.price);
+    const discountPrice =
+      actualPrice - (parseFloat(specialProduct.discount) / 100) * actualPrice;
+
+    const futurPrice =
+      actualPrice + (parseFloat(specialProduct.discount) / 100) * actualPrice;
+
+    if (enteredPrice < discountPrice) {
+      return new Error(
+        `Sorry, you cannot buy this product at a price lower than ${discountPrice}`,
+      );
+    }
+    if (enteredPrice <= futurPrice) {
+      return new Error(
+        `Sorry, you cannot buy this product at a price lower than ${futurPrice}`,
+      );
+    }
     return this.specialProductPriceService.create(
       createSpecialProductPriceInput,
       user,
     );
   }
+
   @Mutation(() => SpecialProductPrice)
   async updateSpecialProductPrice(
     @Args('updateSpecialProductPriceInput')

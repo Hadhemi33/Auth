@@ -23,7 +23,7 @@ export class SpecialProductService {
     private categoryService: CategoryService,
     private userService: UserService,
   ) {}
-  
+
   async createSpecialProduct(
     createSpecialProductInput: CreateSpecialProductInput,
     user: User,
@@ -123,11 +123,6 @@ export class SpecialProductService {
     return specialProductFound;
   }
 
-  async updateSpecialProductt(
-    specialProduct: SpecialProduct,
-  ): Promise<SpecialProduct> {
-    return this.specialProductRepository.save(specialProduct);
-  }
   async updateSpecialProduct(
     updateSpecialProductInput: UpdateSpecialProductInput,
     user: User,
@@ -136,7 +131,8 @@ export class SpecialProductService {
       updateSpecialProductInput.id,
       user,
     );
-    const { title, description, price, imageUrl } = updateSpecialProductInput;
+    const { title, description, price, imageUrl, discount } =
+      updateSpecialProductInput;
     if (title) {
       product.title = title;
     }
@@ -146,10 +142,26 @@ export class SpecialProductService {
     if (price) {
       product.price = price;
     }
+    if (discount) {
+      product.discount = discount;
+    }
 
     if (imageUrl) {
       product.imageUrl = imageUrl;
     }
+
+    if (product.prices && product.prices.length > 0) {
+      product.discount = '0';
+
+      const lastBidPrice = product.prices[product.prices.length - 1]?.price;
+      if (lastBidPrice) {
+        product.price = lastBidPrice;
+      }
+    } else {
+   
+      product.discount = discount;
+    }
+
     try {
       await this.specialProductRepository.save(product);
       return product;
@@ -157,6 +169,7 @@ export class SpecialProductService {
       throw new InternalServerErrorException();
     }
   }
+
   async deleteSpecialProduct(id: string, user: User): Promise<SpecialProduct> {
     try {
       const productFound: SpecialProduct = await this.getSpecalProductUserById(
@@ -193,7 +206,7 @@ export class SpecialProductService {
     user: User,
   ): Promise<SpecialProduct> {
     try {
-      // Retrieve the product based on the provided ID and user
+    
       const productFound: SpecialProduct = await this.getSpecialProductById(id);
 
       const removedProductId = productFound.id;

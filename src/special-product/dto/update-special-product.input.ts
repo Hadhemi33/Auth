@@ -17,6 +17,8 @@ export class UpdateSpecialProductInput extends PartialType(
 
   @Field()
   price?: string;
+  @Field()
+  discount?: string;
 
   @Field({ nullable: true })
   quantity?: number;
@@ -24,6 +26,4 @@ export class UpdateSpecialProductInput extends PartialType(
   @Field({ nullable: true })
   imageUrl?: string;
 
-  @Field({ nullable: true })
-  nbrLike: number;
 }

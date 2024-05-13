@@ -6,33 +6,88 @@ import { SpecialProductPrice } from './entities/special-product-price.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { SpecialProductService } from 'src/special-product/special-product.service';
 
 @Injectable()
 export class SpecialProductPriceService {
   constructor(
     @InjectRepository(SpecialProductPrice)
     private readonly specialProductPriceRepository: Repository<SpecialProductPrice>,
+    private readonly specialProductService: SpecialProductService,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
   ) {}
+  // async create(
+  //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
+  //   user: User,
+  // ): Promise<SpecialProductPrice> {
+  //   const specialProductPrice = this.specialProductPriceRepository.create({
+  //     ...createSpecialProductPriceInput,
+  //     user: user,
+  //   });
+  //   const savedSpecialProductPrice =
+  //     await this.specialProductPriceRepository.save(specialProductPrice);
+  //   console.log(
+  //     'specialProductId:',
+  //     createSpecialProductPriceInput.specialProductId,
+  //   );
+  //   const specialProduct = await this.specialProductRepository.findOne({
+  //     where: { id: createSpecialProductPriceInput.specialProductId },
+  //   });
+
+  //   await this.userRepository
+  //     .createQueryBuilder()
+  //     .relation(User, 'specialProductPrices')
+  //     .of(user)
+  //     .add(savedSpecialProductPrice);
+
+  //   await this.specialProductRepository
+  //     .createQueryBuilder()
+  //     .relation(SpecialProduct, 'prices')
+  //     .of(specialProduct)
+  //     .add(savedSpecialProductPrice);
+
+  //   return savedSpecialProductPrice;
+  // }
   async create(
     createSpecialProductPriceInput: CreateSpecialProductPriceInput,
     user: User,
   ): Promise<SpecialProductPrice> {
+    const specialProduct = await this.specialProductRepository.findOne({
+      where: { id: createSpecialProductPriceInput.specialProductId },
+    });
+
+
+    const price = parseFloat(specialProduct.price);
+    const discount = parseFloat(specialProduct.discount);
+
+
+    let minimumPrice = price;
+    if (!isNaN(discount)) {
+      minimumPrice -= (discount / 100) * price;
+    }
+
     const specialProductPrice = this.specialProductPriceRepository.create({
       ...createSpecialProductPriceInput,
+      price: createSpecialProductPriceInput.price, 
       user: user,
     });
+    const { specialProductId } = createSpecialProductPriceInput;
+    await this.specialProductService.updateSpecialProduct(
+      {
+        id: specialProductId,
+        price: createSpecialProductPriceInput.price,
+      },
+      user,
+    );
     const savedSpecialProductPrice =
       await this.specialProductPriceRepository.save(specialProductPrice);
+
     console.log(
       'specialProductId:',
       createSpecialProductPriceInput.specialProductId,
     );
-    const specialProduct = await this.specialProductRepository.findOne({
-      where: { id: createSpecialProductPriceInput.specialProductId },
-    });
 
     await this.userRepository
       .createQueryBuilder()
@@ -48,6 +103,7 @@ export class SpecialProductPriceService {
 
     return savedSpecialProductPrice;
   }
+
   async update(
     updateSpecialProductPriceInput: UpdateSpecialProductPriceInput,
   ): Promise<SpecialProductPrice> {

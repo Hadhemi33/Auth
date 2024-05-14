@@ -14,10 +14,12 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { SpecialProductService } from 'src/special-product/special-product.service';
+import { CategoryModule } from 'src/category/category.module';
+import { SpecialProductModule } from 'src/special-product/special-product.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, User, Order, Category]),
+    TypeOrmModule.forFeature([Product, User, Order, Category, SpecialProduct]),
     forwardRef(() => AuthModule),
     UserModule,
   ],
@@ -27,6 +29,7 @@ import { SpecialProductService } from 'src/special-product/special-product.servi
     AuthService,
     UserService,
     JwtService,
+    SpecialProductService,
     CategoryService,
   ],
 })

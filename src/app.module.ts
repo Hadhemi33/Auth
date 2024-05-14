@@ -21,18 +21,15 @@ import { JwtService } from '@nestjs/jwt';
 import { SpecialProductModule } from './special-product/special-product.module';
 import { OrderHistoryModule } from './order-history/order-history.module';
 import { SpecialProductPriceModule } from './special-product-price/special-product-price.module';
+import { PaymentModule } from './payment/payment.module';
+import { PaymentService } from './payment/payment.service';
 
 @Module({
   imports: [
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'uploaded-files'),
-    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'uploads'),
-    // }),
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
 
@@ -46,7 +43,7 @@ import { SpecialProductPriceModule } from './special-product-price/special-produ
             try {
               const jwtService = new JwtService({ secret: 'JWT_SECRET' }); // Ensure this is your JWT secret
               const user = jwtService.decode(token);
-              req.user = user; // Store the user in the request context
+              req.user = user;
             } catch (e) {
               console.error('JWT Decoding Error:', e);
             }
@@ -77,6 +74,7 @@ import { SpecialProductPriceModule } from './special-product-price/special-produ
     SpecialProductModule,
     OrderHistoryModule,
     SpecialProductPriceModule,
+    PaymentModule,
 
     // ChatModule,
 
@@ -84,22 +82,8 @@ import { SpecialProductPriceModule } from './special-product-price/special-produ
   ],
 
   controllers: [AppController],
-  providers: [
-    AppService,
-    // {
-    //   provide: 'Upload',
-    //   useValue: GraphQLUpload,
-    // },
-  ],
+  providers: [AppService,PaymentService],
 })
-// export class AppModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     // Apply the upload middleware
-//     consumer
-//       .apply(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
-//       .forRoutes('/graphql');
-//   }
-// }
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(CorsMiddleware).forRoutes('*');

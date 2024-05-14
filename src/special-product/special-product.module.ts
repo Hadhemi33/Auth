@@ -15,21 +15,31 @@ import { CategoryModule } from 'src/category/category.module';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
+import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
+import { SpecialProductPriceModule } from 'src/special-product-price/special-product-price.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SpecialProduct, User, Category]),
+    TypeOrmModule.forFeature([
+      SpecialProduct,
+      User,
+      Category,
+      SpecialProductPrice,
+    ]),
     forwardRef(() => AuthModule),
     CategoryModule,
     UserModule,
+    SpecialProductPriceModule,
   ],
   providers: [
     SpecialProductResolver,
     CategoryService,
     UserService,
     AuthService,
+    SpecialProductPriceService,
     JwtService,
-
+   
     SpecialProductService,
   ],
 })

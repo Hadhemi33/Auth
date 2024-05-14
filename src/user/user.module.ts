@@ -8,13 +8,30 @@ import { Category } from 'src/category/entities/category.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
+import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
+import { SpecialProductService } from 'src/special-product/special-product.service';
+import { CategoryService } from 'src/category/category.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Category, Order, Product, SpecialProduct]),
+    TypeOrmModule.forFeature([
+      User,
+      Category,
+      Order,
+      Product,
+      SpecialProduct,
+      SpecialProductPrice,
+    ]),
     forwardRef(() => AuthModule),
   ],
-  providers: [UserService, UserResolver],
+  providers: [
+    UserService,
+    UserResolver,
+    SpecialProductPriceService,
+    SpecialProductService,
+    CategoryService
+  ],
   exports: [UserService],
 })
 export class UserModule {}

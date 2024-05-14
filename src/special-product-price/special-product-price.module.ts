@@ -16,7 +16,12 @@ import { Category } from 'src/category/entities/category.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SpecialProductPrice, User, SpecialProduct,Category]),
+    TypeOrmModule.forFeature([
+      SpecialProductPrice,
+      User,
+      SpecialProduct,
+      Category,
+    ]),
     forwardRef(() => AuthModule),
     UserModule,
   ],
@@ -27,6 +32,7 @@ import { Category } from 'src/category/entities/category.entity';
     AuthService,
     SpecialProductService,
     SpecialProduct,
+    UserModule,
     CategoryService,
     JwtService,
   ],

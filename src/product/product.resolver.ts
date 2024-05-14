@@ -178,6 +178,4 @@ export class ProductResolver {
   //   console.log(`File uploaded: ${filename}`);
   //   return true; // Retourne "true" pour indiquer le succès
   // }
-
-
 }

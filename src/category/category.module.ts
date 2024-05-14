@@ -10,6 +10,7 @@ import { Order } from 'src/order/entities/order.entity';
 import { ProductService } from 'src/product/product.service';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { SpecialProductService } from 'src/special-product/special-product.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SpecialProductService } from 'src/special-product/special-product.servi
     CategoryService,
     UserService,
     ProductService,
+    JwtService,
 
     SpecialProductService,
   ],

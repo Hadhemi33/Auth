@@ -19,6 +19,9 @@ export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
+  async sendNotification(userId: string, message: string): Promise<void> {
+    console.log(`Sending notification to user ${userId}: ${message}`);
+  }
   async createUser(createUserInput: SignupUserInput): Promise<SignupResponse> {
     const { username, password, phoneNumber, fullName, imageUrl } =
       createUserInput;

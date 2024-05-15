@@ -16,10 +16,22 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
 import { SpecialProductService } from 'src/special-product/special-product.service';
 import { CategoryModule } from 'src/category/category.module';
 import { SpecialProductModule } from 'src/special-product/special-product.module';
+import { NotificationService } from 'src/notification/notification.service';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, User, Order, Category, SpecialProduct]),
+    TypeOrmModule.forFeature([
+      Product,
+      User,
+      Notification,
+      Order,
+      Category,
+      SpecialProductPrice,
+      SpecialProduct,
+    ]),
     forwardRef(() => AuthModule),
     UserModule,
   ],
@@ -27,8 +39,10 @@ import { SpecialProductModule } from 'src/special-product/special-product.module
     ProductResolver,
     ProductService,
     AuthService,
+    NotificationService,
     UserService,
     JwtService,
+    SpecialProductPriceService,
     SpecialProductService,
     CategoryService,
   ],

@@ -13,14 +13,64 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    private notificationService: NotificationService,
+    @InjectRepository(SpecialProductPrice)
+    private specialProductPriceRepository: Repository<SpecialProductPrice>,
   ) {}
-  async sendNotification(userId: string, message: string): Promise<void> {
-    console.log(`Sending notification to user ${userId}: ${message}`);
+  // async sendNotification(userId: string, message: string): Promise<void> {
+  //   console.log(`Sending notification to user ${userId}: ${message}`);
+  // }
+  async sendNotification(
+    userId: string,
+    message: string,
+    specialProductPriceId?: string,
+  ): Promise<void> {
+    try {
+      // Send the notification
+      console.log(`Sending notification to user ${userId}: ${message}`);
+
+      // Save the notification to the database
+      const user = await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+      const specialProductPrice =
+        await this.specialProductPriceRepository.findOne({
+          where: { id: specialProductPriceId },
+        });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${userId} not found.`);
+      }
+      // let specialProductPrice: SpecialProductPrice | undefined;
+      if (specialProductPriceId) {
+        // specialProductPrice = await this.specialProductPriceRepository.findOne({
+        //   where: { id: specialProductPriceId.toString() },
+        // });
+        if (!specialProductPrice) {
+          throw new NotFoundException(
+            `Special product price with ID ${specialProductPriceId} not found.`,
+          );
+        }
+      }
+
+      await this.notificationService.create({
+        message,
+        user,
+        specialProductPrice,
+      });
+    } catch (error) {
+      console.error(
+        `Error sending notification to user ${userId}: ${error.message}`,
+      );
+      throw new InternalServerErrorException('Failed to send notification.');
+    }
   }
   async createUser(createUserInput: SignupUserInput): Promise<SignupResponse> {
     const { username, password, phoneNumber, fullName, imageUrl } =

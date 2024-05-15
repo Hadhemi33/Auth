@@ -2,6 +2,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { Category } from 'src/category/entities/category.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 import { Order } from 'src/order/entities/order.entity';
 
@@ -78,4 +79,7 @@ export class User {
   @OneToMany(() => SpecialProductPrice, (price) => price.user)
   @Field(() => [SpecialProductPrice])
   specialProductPrices: SpecialProductPrice[];
+
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
 }

@@ -3,7 +3,7 @@ import { CreateSpecialProductPriceInput } from './dto/create-special-product-pri
 import { UpdateSpecialProductPriceInput } from './dto/update-special-product-price.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpecialProductPrice } from './entities/special-product-price.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { SpecialProductService } from 'src/special-product/special-product.service';
@@ -21,117 +21,27 @@ export class SpecialProductPriceService {
     private specialProductRepository: Repository<SpecialProduct>,
     private readonly userService: UserService,
   ) {}
+
   async getHigherBids(
     specialProductId: string,
-    currentPrice: number,
+    // currentPrice: number,
   ): Promise<SpecialProductPrice[]> {
-    return this.specialProductPriceRepository.find({
-      where: {
-        specialProduct: { id: specialProductId },
-        price: MoreThan(currentPrice.toString()),
-      },
-      relations: ['user'],
-    });
-  }
-  async getBidsToNotify(): Promise<any[]> {
-    const bids = await this.specialProductPriceRepository.find({
-      where: {
-        notified: false,
-      },
-      relations: ['user', 'specialProduct'],
-    });
+    try {
+      const higherBids = await this.specialProductPriceRepository.find({
+        where: {
+          specialProduct: { id: specialProductId },
+          // price: currentPrice.toString(),
+        },
+        relations: ['user'],
+      });
 
-    const bidsToNotify = [];
-
-    for (const bid of bids) {
-      const higherBids = await this.getHigherBids(
-        bid.specialProduct.id,
-        parseFloat(bid.price),
-      );
-      if (higherBids.length > 0) {
-        bidsToNotify.push({
-          id: bid.id,
-          userId: bid.user.id,
-          productTitle: bid.specialProduct.title,
-          newPrice: higherBids[0].price,
-        });
-      }
+      console.log('Higher Bids:', higherBids);
+      return higherBids;
+    } catch (error) {
+      console.error('Error fetching higher bids:', error);
+      throw error;
     }
-
-    return bidsToNotify;
   }
-
-  async markBidAsNotified(bidId: string): Promise<void> {
-    await this.specialProductPriceRepository.update(bidId, { notified: true });
-  }
-  // async create(
-  //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
-  //   user: User,
-  // ): Promise<SpecialProductPrice> {
-  //   const specialProduct = await this.specialProductRepository.findOne({
-  //     where: { id: createSpecialProductPriceInput.specialProductId },
-  //   });
-
-  //   const price = parseFloat(specialProduct.price);
-  //   const discount = parseFloat(specialProduct.discount);
-
-  //   let minimumPrice = price;
-  //   if (!isNaN(discount)) {
-  //     minimumPrice -= (discount / 100) * price;
-  //   }
-  //   const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
-  //   if (enteredPrice < minimumPrice) {
-  //     throw new Error(
-  //       `Sorry, you cannot buy this product at a price lower than ${minimumPrice}`,
-  //     );
-  //   }
-
-  //   const previousBids = await this.getHigherBids(
-  //     specialProduct.id,
-  //     enteredPrice,
-  //   );
-  //   const specialProductPrice = this.specialProductPriceRepository.create({
-  //     ...createSpecialProductPriceInput,
-  //     price: createSpecialProductPriceInput.price,
-  //     user: user,
-  //   });
-  //   const { specialProductId } = createSpecialProductPriceInput;
-  //   await this.specialProductService.updateSpecialProduct(
-  //     {
-  //       id: specialProductId,
-  //       price: createSpecialProductPriceInput.price,
-  //     },
-  //     user,
-  //   );
-  //   const savedSpecialProductPrice =
-  //     await this.specialProductPriceRepository.save(specialProductPrice);
-
-  //   for (const bid of previousBids) {
-  //     await this.userService.sendNotification(
-  //       bid.user.id,
-  //       `A higher bid of ${enteredPrice} has been placed for the product ${specialProduct.title}`,
-  //     );
-  //   }
-
-  //   console.log(
-  //     'specialProductId:',
-  //     createSpecialProductPriceInput.specialProductId,
-  //   );
-
-  //   await this.userRepository
-  //     .createQueryBuilder()
-  //     .relation(User, 'specialProductPrices')
-  //     .of(user)
-  //     .add(savedSpecialProductPrice);
-
-  //   await this.specialProductRepository
-  //     .createQueryBuilder()
-  //     .relation(SpecialProduct, 'prices')
-  //     .of(specialProduct)
-  //     .add(savedSpecialProductPrice);
-
-  //   return savedSpecialProductPrice;
-  // }
 
   async create(
     createSpecialProductPriceInput: CreateSpecialProductPriceInput,
@@ -160,17 +70,11 @@ export class SpecialProductPriceService {
     if (!isNaN(discount)) {
       minimumPrice -= (discount / 100) * price;
     }
-
     const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
-    if (enteredPrice < minimumPrice) {
-      throw new Error(
-        `Sorry, you cannot buy this product at a price lower than ${minimumPrice}`,
-      );
-    }
 
     const previousBids = await this.getHigherBids(
       specialProduct.id,
-      enteredPrice,
+      // enteredPrice,
     );
 
     const specialProductPrice = this.specialProductPriceRepository.create({
@@ -189,12 +93,16 @@ export class SpecialProductPriceService {
 
     const savedSpecialProductPrice =
       await this.specialProductPriceRepository.save(specialProductPrice);
+    const notifiedUsers = new Set<number>();
 
     for (const bid of previousBids) {
-      await this.userService.sendNotification(
-        bid.user.id,
-        `A higher bidd of ${enteredPrice} has been placed for the product ${specialProduct.title}`,
-      );
+      if (!notifiedUsers.has(parseInt(bid.user.id))) {
+        await this.userService.sendNotification(
+          bid.user.id,
+          `A higher bid of ${enteredPrice} has been placed for the product ${specialProduct.title}`,
+        );
+        notifiedUsers.add(parseInt(bid.user.id));
+      }
     }
 
     await this.userRepository
@@ -211,21 +119,7 @@ export class SpecialProductPriceService {
 
     return savedSpecialProductPrice;
   }
-  // async update(
-  //   updateSpecialProductPriceInput: UpdateSpecialProductPriceInput,
-  // ): Promise<SpecialProductPrice> {
-  //   const { id, ...rest } = updateSpecialProductPriceInput;
-  //   await this.specialProductPriceRepository.update(id, rest);
-  //   return this.specialProductPriceRepository.findOne({ where: { id } });
-  // }
 
-  // async findBySpecialProductId(
-  //   specialProductId: string,
-  // ): Promise<SpecialProductPrice[]> {
-  //   return this.specialProductPriceRepository.find({
-  //     where: { id: specialProductId },
-  //   });
-  // }
   async update(
     updateSpecialProductPriceInput: UpdateSpecialProductPriceInput,
   ): Promise<SpecialProductPrice> {

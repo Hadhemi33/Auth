@@ -25,6 +25,7 @@ import { PaymentModule } from './payment/payment.module';
 import { PaymentService } from './payment/payment.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationModule } from './notification/notification.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -78,6 +79,7 @@ import { NotificationModule } from './notification/notification.module';
     SpecialProductPriceModule,
     PaymentModule,
     NotificationModule,
+
 
     // ChatModule,
 

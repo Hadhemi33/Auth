@@ -39,10 +39,11 @@ import { NotificationService } from 'src/notification/notification.service';
     SpecialProductResolver,
     CategoryService,
     UserService,
+    NotificationService,
     AuthService,
     SpecialProductPriceService,
     JwtService,
-    NotificationService,
+
     SpecialProductService,
   ],
 })

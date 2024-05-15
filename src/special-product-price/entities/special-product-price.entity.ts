@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { Notification } from 'src/notification/entities/notification.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -6,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -34,7 +36,10 @@ export class SpecialProductPrice {
   @JoinColumn({ name: 'userId' })
   @Field(() => User)
   user: User;
-  @Column({ default: false })
-  @Field()
-  notified: boolean;
+
+  @OneToMany(
+    () => Notification,
+    (notification) => notification.specialProductPrice,
+  )
+  notifications: Notification[];
 }

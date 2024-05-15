@@ -10,7 +10,7 @@ export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const gqlContext = GqlExecutionContext.create(context);
     const user = gqlContext.getContext().req.user;
-    console.log('Extracted User:', user); // Log to check user info
+    // console.log('Extracted User:', user); // Log to check user info
     return user;
   },
 );

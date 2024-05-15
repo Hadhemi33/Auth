@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
-
-import { UserService } from 'src/user/user.service';
-import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { CreateNotificationInput } from './dto/create-notification.input';
+import { UpdateNotificationInput } from './dto/update-notification.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Notification } from './entities/notification.entity';
 
 @Injectable()
 export class NotificationService {
   constructor(
-    private readonly specialProductPriceService: SpecialProductPriceService,
-    private readonly userService: UserService,
+    @InjectRepository(Notification)
+    private notificationRepository: Repository<Notification>,
   ) {}
-  @Cron(CronExpression.EVERY_MINUTE)
-  async notifyPreviousHighestBidder() {
-    const bidsToNotify =
-      await this.specialProductPriceService.getBidsToNotify();
 
-    for (const bid of bidsToNotify) {
-      await this.userService.sendNotification(
-        bid.userId,
-        `A higher bid of ${bid.newPrice} has been placed for the product ${bid.productTitle}`,
-      );
-      await this.specialProductPriceService.markBidAsNotified(bid.id);
-    }
+  async create(notificationData: Partial<Notification>): Promise<Notification> {
+    const notification = this.notificationRepository.create(notificationData);
+    return this.notificationRepository.save(notification);
   }
 }

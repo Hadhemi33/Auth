@@ -149,6 +149,7 @@ type Mutation {
   updateSpecialProduct(updateSpecialProductInput: UpdateSpecialProductInput!): SpecialProduct!
   deleteSpecialProduct(id: String!): SpecialProduct!
   deleteSpeciaProductAdmin(id: String!): SpecialProduct!
+  deleteAllSpecialProduct: String!
   createSpecialProductPrice(createSpecialProductPriceInput: CreateSpecialProductPriceInput!): SpecialProductPrice!
   updateSpecialProductPrice(updateSpecialProductPriceInput: UpdateSpecialProductPriceInput!): SpecialProductPrice!
   deleteAllSpecialProductPrices: String!
@@ -158,7 +159,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-14T14:23:01.623Z"
+  createdAt: String! = "2024-05-15T00:57:24.793Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -216,7 +217,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-14T14:23:01.972Z"
+  createdAt: String! = "2024-05-15T00:57:25.144Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -227,7 +228,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-14T14:23:01.972Z"
+  createdAt: String = "2024-05-15T00:57:25.144Z"
   discount: String!
   endingIn: String
   categoryId: String

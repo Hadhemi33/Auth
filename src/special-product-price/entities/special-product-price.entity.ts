@@ -20,12 +20,17 @@ export class SpecialProductPrice {
   @Field()
   price: string;
 
-  @ManyToOne(() => SpecialProduct, (specialProduct) => specialProduct.prices)
+  @ManyToOne(() => SpecialProduct, (specialProduct) => specialProduct.prices, {
+    eager: true,
+  })
   @JoinColumn({ name: 'specialProductId' })
   @Field(() => SpecialProduct)
   specialProduct: SpecialProduct;
 
-  @ManyToOne(() => User, (user) => user.specialProductPrices)
+  @ManyToOne(() => User, (user) => user.specialProductPrices, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   @Field(() => User)
   user: User;

@@ -58,7 +58,10 @@ export class SpecialProduct {
   @Field(() => Category, { nullable: true })
   category: Category;
 
-  @ManyToOne(() => User, (user) => user.specialProducts)
+  @ManyToOne(() => User, (user) => user.specialProducts, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'userId' })
   @Field(() => User)
   user: User;
@@ -74,7 +77,10 @@ export class SpecialProduct {
   @Field(() => [User], { nullable: true })
   likedBy?: User[];
 
-  @OneToMany(() => SpecialProductPrice, (price) => price.specialProduct)
+  @OneToMany(() => SpecialProductPrice, (price) => price.specialProduct, {
+    cascade: ['remove'], // Enable cascading delete
+    onDelete: 'CASCADE',
+  })
   @Field(() => [SpecialProductPrice])
   prices: SpecialProductPrice[];
 }

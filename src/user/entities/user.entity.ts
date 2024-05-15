@@ -75,7 +75,6 @@ export class User {
   @Field(() => [SpecialProduct], { nullable: true })
   likedSpecialProducts?: SpecialProduct[];
 
-  
   @OneToMany(() => SpecialProductPrice, (price) => price.user)
   @Field(() => [SpecialProductPrice])
   specialProductPrices: SpecialProductPrice[];

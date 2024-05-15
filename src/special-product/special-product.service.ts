@@ -237,7 +237,6 @@
 // }
 
 import {
-
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -354,7 +353,7 @@ export class SpecialProductService {
     });
 
     if (!specialProductFound) {
-      throw new NotFoundException(`Special Product with id ${id} not found`);
+      throw new NotFoundException(`Special Product with  ${id} not found`);
     }
     return specialProductFound;
   }
@@ -363,9 +362,10 @@ export class SpecialProductService {
     updateSpecialProductInput: UpdateSpecialProductInput,
     user: User,
   ): Promise<SpecialProduct> {
-    const product = await this.getSpecialProductUserById(
+    const product = await this.getSpecialProductById(
+      // const product = await this.getSpecialProductUserById(
       updateSpecialProductInput.id,
-      user,
+      // user,
     );
     const { title, description, price, imageUrl, discount } =
       updateSpecialProductInput;
@@ -469,6 +469,9 @@ export class SpecialProductService {
     }
   }
 
+  async deleteAll(): Promise<void> {
+    await this.specialProductRepository.delete({});
+  }
   // async getHigherBids(
   //   specialProductId: string,
   //   currentPrice: number,

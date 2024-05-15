@@ -79,4 +79,9 @@ export class SpecialProductResolver {
   ): Promise<SpecialProduct> {
     return this.specialProductService.deleteSpecialProductAdmin(id, user);
   }
+  @Mutation(() => String)
+  async deleteAllSpecialProduct(): Promise<string> {
+    await this.specialProductService.deleteAll();
+    return 'All special product  deleted successfully';
+  }
 }

@@ -19,7 +19,6 @@ export class OrderHistory {
   @Field()
   @Column()
   totalPrice: string;
-
   // @Field()
   // @ManyToOne(() => User, { eager: true })
   // @JoinColumn({ name: 'user_id' })

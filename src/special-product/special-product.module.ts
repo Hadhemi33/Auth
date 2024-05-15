@@ -18,12 +18,15 @@ import { JwtService } from '@nestjs/jwt';
 import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
 import { SpecialProductPriceModule } from 'src/special-product-price/special-product-price.module';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       SpecialProduct,
       User,
+      Notification,
       Category,
       SpecialProductPrice,
     ]),
@@ -39,7 +42,7 @@ import { SpecialProductPriceModule } from 'src/special-product-price/special-pro
     AuthService,
     SpecialProductPriceService,
     JwtService,
-   
+    NotificationService,
     SpecialProductService,
   ],
 })

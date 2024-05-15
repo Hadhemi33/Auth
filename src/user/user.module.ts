@@ -12,6 +12,8 @@ import { SpecialProductPrice } from 'src/special-product-price/entities/special-
 import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
 import { SpecialProductService } from 'src/special-product/special-product.service';
 import { CategoryService } from 'src/category/category.service';
+import { NotificationService } from 'src/notification/notification.service';
+import { Notification } from 'src/notification/entities/notification.entity';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { CategoryService } from 'src/category/category.service';
       Category,
       Order,
       Product,
+      Notification,
       SpecialProduct,
       SpecialProductPrice,
     ]),
@@ -30,7 +33,8 @@ import { CategoryService } from 'src/category/category.service';
     UserResolver,
     SpecialProductPriceService,
     SpecialProductService,
-    CategoryService
+    CategoryService,
+    NotificationService,
   ],
   exports: [UserService],
 })

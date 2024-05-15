@@ -13,6 +13,8 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
 import { SpecialProductService } from 'src/special-product/special-product.service';
 import { CategoryService } from 'src/category/category.service';
 import { Category } from 'src/category/entities/category.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { Category } from 'src/category/entities/category.entity';
       User,
       SpecialProduct,
       Category,
+      Notification,
     ]),
     forwardRef(() => AuthModule),
     UserModule,
@@ -30,6 +33,7 @@ import { Category } from 'src/category/entities/category.entity';
     SpecialProductPriceService,
     UserService,
     AuthService,
+    NotificationService,
     SpecialProductService,
     SpecialProduct,
     UserModule,

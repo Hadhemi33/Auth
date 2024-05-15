@@ -33,6 +33,37 @@ export class SpecialProductPriceService {
       relations: ['user'],
     });
   }
+  async getBidsToNotify(): Promise<any[]> {
+    const bids = await this.specialProductPriceRepository.find({
+      where: {
+        notified: false,
+      },
+      relations: ['user', 'specialProduct'],
+    });
+
+    const bidsToNotify = [];
+
+    for (const bid of bids) {
+      const higherBids = await this.getHigherBids(
+        bid.specialProduct.id,
+        parseFloat(bid.price),
+      );
+      if (higherBids.length > 0) {
+        bidsToNotify.push({
+          id: bid.id,
+          userId: bid.user.id,
+          productTitle: bid.specialProduct.title,
+          newPrice: higherBids[0].price,
+        });
+      }
+    }
+
+    return bidsToNotify;
+  }
+
+  async markBidAsNotified(bidId: string): Promise<void> {
+    await this.specialProductPriceRepository.update(bidId, { notified: true });
+  }
   // async create(
   //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
   //   user: User,
@@ -113,7 +144,7 @@ export class SpecialProductPriceService {
     if (!specialProduct) {
       throw new Error('Special not found.');
     }
-   
+
     const userOwnsProduct = user.specialProducts.some(
       (product) => product.id === specialProduct.id,
     );
@@ -162,7 +193,7 @@ export class SpecialProductPriceService {
     for (const bid of previousBids) {
       await this.userService.sendNotification(
         bid.user.id,
-        `A higher bid of ${enteredPrice} has been placed for the product ${specialProduct.title}`,
+        `A higher bidd of ${enteredPrice} has been placed for the product ${specialProduct.title}`,
       );
     }
 

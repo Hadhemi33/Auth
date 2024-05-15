@@ -34,4 +34,7 @@ export class SpecialProductPrice {
   @JoinColumn({ name: 'userId' })
   @Field(() => User)
   user: User;
+  @Column({ default: false })
+  @Field()
+  notified: boolean;
 }

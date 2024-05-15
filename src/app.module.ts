@@ -23,7 +23,8 @@ import { OrderHistoryModule } from './order-history/order-history.module';
 import { SpecialProductPriceModule } from './special-product-price/special-product-price.module';
 import { PaymentModule } from './payment/payment.module';
 import { PaymentService } from './payment/payment.service';
-
+import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -66,6 +67,7 @@ import { PaymentService } from './payment/payment.service';
         autoLoadEntities: true,
       }),
     }),
+    ScheduleModule.forRoot(),
     ProductModule,
     UserModule,
     AuthModule,
@@ -75,6 +77,7 @@ import { PaymentService } from './payment/payment.service';
     OrderHistoryModule,
     SpecialProductPriceModule,
     PaymentModule,
+    NotificationModule,
 
     // ChatModule,
 
@@ -82,7 +85,7 @@ import { PaymentService } from './payment/payment.service';
   ],
 
   controllers: [AppController],
-  providers: [AppService,PaymentService],
+  providers: [AppService, PaymentService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

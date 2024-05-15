@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { SpecialProductPriceService } from './special-product-price.service';
 import { SpecialProductPrice } from './entities/special-product-price.entity';
 import { CreateSpecialProductPriceInput } from './dto/create-special-product-price.input';
@@ -10,13 +10,50 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { Repository } from 'typeorm';
+import { NotificationService } from 'src/notification/notification.service';
 @Resolver(() => SpecialProductPrice)
 export class SpecialProductPriceResolver {
   constructor(
     private readonly specialProductPriceService: SpecialProductPriceService,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
+    private readonly notificationService: NotificationService,
   ) {}
+  // @Mutation(() => SpecialProductPrice)
+  // @UseGuards(JwtAuthGuard)
+  // async createSpecialProductPrice(
+  //   @Args('createSpecialProductPriceInput')
+  //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<SpecialProductPrice | Error> {
+  //   const specialProduct = await this.specialProductRepository.findOne({
+  //     where: { id: createSpecialProductPriceInput.specialProductId },
+  //   });
+
+  //   const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
+  //   const actualPrice = parseFloat(specialProduct.price);
+  //   const discountPrice =
+  //     actualPrice - (parseFloat(specialProduct.discount) / 100) * actualPrice;
+
+  //   const futurPrice =
+  //     actualPrice + (parseFloat(specialProduct.discount) / 100) * actualPrice;
+
+  //   if (enteredPrice < discountPrice) {
+  //     return new Error(
+  //       `Sorry, you cannot buy this product at a price lower than ${discountPrice}`,
+  //     );
+  //   }
+  //   if (enteredPrice <= futurPrice) {
+  //     return new Error(
+  //       `Sorry, you cannot buy this product at a price lower than ${futurPrice}`,
+  //     );
+  //   }
+  //   return this.specialProductPriceService.create(
+  //     createSpecialProductPriceInput,
+  //     user,
+  //   );
+  // }
+
   @Mutation(() => SpecialProductPrice)
   @UseGuards(JwtAuthGuard)
   async createSpecialProductPrice(
@@ -46,43 +83,13 @@ export class SpecialProductPriceResolver {
         `Sorry, you cannot buy this product at a price lower than ${futurPrice}`,
       );
     }
-    return this.specialProductPriceService.create(
+    const specialProductPrice = await this.specialProductPriceService.create(
       createSpecialProductPriceInput,
       user,
     );
+    await this.notificationService.notifyPreviousHighestBidder();
+    return specialProductPrice;
   }
-  // @Mutation(() => SpecialProductPrice)
-  // @UseGuards(JwtAuthGuard)
-  // async createSpecialProductPrice(
-  //   @Args('createSpecialProductPriceInput')
-  //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SpecialProductPrice | Error> {
-  //   const specialProduct = await this.specialProductRepository.findOne({
-  //     where: { id: createSpecialProductPriceInput.specialProductId },
-  //   });
-
-  //   if (!specialProduct) {
-  //     throw new Error('Special product not found.');
-  //   }
-
-  //   const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
-  //   const actualPrice = parseFloat(specialProduct.price);
-  //   const discountPrice =
-  //     actualPrice - (parseFloat(specialProduct.discount) / 100) * actualPrice;
-
-  //   if (enteredPrice < discountPrice) {
-  //     throw new Error(
-  //       `Sorry, you cannot buy this product at a price lower than ${discountPrice}`,
-  //     );
-  //   }
-
-  //   return this.specialProductPriceService.create(
-  //     createSpecialProductPriceInput,
-  //     user,
-  //   );
-  // }
-
   @Mutation(() => SpecialProductPrice)
   async updateSpecialProductPrice(
     @Args('updateSpecialProductPriceInput')

@@ -13,7 +13,6 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { Notification } from 'src/notification/entities/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
 import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 
@@ -25,19 +24,17 @@ export class UserService {
     @InjectRepository(SpecialProductPrice)
     private specialProductPriceRepository: Repository<SpecialProductPrice>,
   ) {}
-  // async sendNotification(userId: string, message: string): Promise<void> {
-  //   console.log(`Sending notification to user ${userId}: ${message}`);
-  // }
+ 
   async sendNotification(
     userId: string,
     message: string,
     specialProductPriceId?: string,
   ): Promise<void> {
     try {
-      // Send the notification
+ 
       console.log(`Sending notification to user ${userId}: ${message}`);
 
-      // Save the notification to the database
+ 
       const user = await this.usersRepository.findOne({
         where: { id: userId },
       });
@@ -48,11 +45,9 @@ export class UserService {
       if (!user) {
         throw new NotFoundException(`User with ID ${userId} not found.`);
       }
-      // let specialProductPrice: SpecialProductPrice | undefined;
+
       if (specialProductPriceId) {
-        // specialProductPrice = await this.specialProductPriceRepository.findOne({
-        //   where: { id: specialProductPriceId.toString() },
-        // });
+      
         if (!specialProductPrice) {
           throw new NotFoundException(
             `Special product price with ID ${specialProductPriceId} not found.`,

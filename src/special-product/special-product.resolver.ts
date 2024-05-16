@@ -12,7 +12,7 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => SpecialProduct)
 export class SpecialProductResolver {
-  constructor(private readonly specialProductService: SpecialProductService) {}
+  constructor(private specialProductService: SpecialProductService) {}
 
   @Mutation(() => SpecialProduct)
   @UseGuards(JwtAuthGuard)
@@ -60,7 +60,10 @@ export class SpecialProductResolver {
       user,
     );
   }
-
+  @Query(() => [SpecialProduct], { name: 'expiredSpecialProducts' })
+  async getExpiredSpecialProducts(): Promise<SpecialProduct[]> {
+    return this.specialProductService.getExpiredSpecialProducts();
+  }
   @Mutation(() => SpecialProduct)
   @UseGuards(JwtAuthGuard)
 

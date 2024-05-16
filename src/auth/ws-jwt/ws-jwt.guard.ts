@@ -11,7 +11,7 @@
 
 // @Injectable()
 // export class WsJwtGuard implements CanActivate {
-//   constructor(private readonly configService: ConfigService) {}
+//   constructor(private  configService: ConfigService) {}
 
 //   canActivate(
 //     context: ExecutionContext,

@@ -12,8 +12,8 @@ import { User } from 'src/user/entities/user.entity';
 @Resolver(() => Order)
 export class OrderResolver {
   constructor(
-    private readonly orderService: OrderService,
-    private readonly productService: ProductService,
+    private  orderService: OrderService,
+    private  productService: ProductService,
   ) {}
   @Mutation(() => Order)
   @UseGuards(JwtAuthGuard)

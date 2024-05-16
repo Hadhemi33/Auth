@@ -76,8 +76,8 @@ import { SignupResponse } from './dto/signup-response';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private  userService: UserService,
+    private  jwtService: JwtService,
   ) {}
 
   async signup(signupUserInput: SignupUserInput): Promise<SignupResponse> {

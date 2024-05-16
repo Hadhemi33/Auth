@@ -123,6 +123,7 @@ type Query {
   getOrderById(id: String!): Order!
   getAllOrders: [Order!]!
   getAllSpecialProducts(userId: String, title: String, price: String, categoryId: String): [SpecialProduct!]!
+  expiredSpecialProducts: [SpecialProduct!]!
   specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
   AllspecialProductPrices: [SpecialProductPrice!]!
   getAllOrderHistory: [OrderHistory!]!
@@ -154,12 +155,13 @@ type Mutation {
   updateSpecialProductPrice(updateSpecialProductPriceInput: UpdateSpecialProductPriceInput!): SpecialProductPrice!
   deleteAllSpecialProductPrices: String!
   createPaymentIntent(amount: Float!, currency: String!): String!
+  deleteAllNotification: String!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-15T22:51:27.452Z"
+  createdAt: String! = "2024-05-16T02:30:17.273Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -217,7 +219,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-15T22:51:27.937Z"
+  createdAt: String! = "2024-05-16T02:30:17.671Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -228,7 +230,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-15T22:51:27.937Z"
+  createdAt: String = "2024-05-16T02:30:17.671Z"
   discount: String!
   endingIn: String
   categoryId: String

@@ -18,8 +18,8 @@ import { Notification } from './entities/notification.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      SpecialProductPrice,
       User,
+      SpecialProductPrice,
       SpecialProduct,
       Notification,
       Category,
@@ -35,8 +35,7 @@ import { Notification } from './entities/notification.entity';
     AuthService,
     SpecialProductPriceService,
     SpecialProductService,
-    SpecialProduct,
-    UserModule,
+
     JwtService,
   ],
 })

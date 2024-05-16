@@ -10,4 +10,5 @@ export class UpdateSpecialProductPriceInput extends PartialType(
 
   @Field({ nullable: true })
   price?: string;
+
 }

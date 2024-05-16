@@ -8,7 +8,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Resolver(() => OrderHistory)
 export class OrderHistoryResolver {
-  constructor(private readonly orderHistoryService: OrderHistoryService) {}
+  constructor(private  orderHistoryService: OrderHistoryService) {}
 
   @Query(() => [OrderHistory])
   @UseGuards(JwtAuthGuard) // If needed, use guards for security

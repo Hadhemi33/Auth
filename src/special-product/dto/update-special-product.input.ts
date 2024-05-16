@@ -26,4 +26,5 @@ export class UpdateSpecialProductInput extends PartialType(
   @Field({ nullable: true })
   imageUrl?: string;
 
+
 }

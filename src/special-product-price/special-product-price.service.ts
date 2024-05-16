@@ -14,12 +14,12 @@ import { spec } from 'node:test/reporters';
 export class SpecialProductPriceService {
   constructor(
     @InjectRepository(SpecialProductPrice)
-    private readonly specialProductPriceRepository: Repository<SpecialProductPrice>,
-    private readonly specialProductService: SpecialProductService,
+    private  specialProductPriceRepository: Repository<SpecialProductPrice>,
+    private  specialProductService: SpecialProductService,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
-    private readonly userService: UserService,
+    private  userService: UserService,
   ) {}
 
   async getHigherBids(

@@ -243,7 +243,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Like, Repository } from 'typeorm';
+import {
+  Between,
+  LessThan,
+  LessThanOrEqual,
+  Like,
+  MoreThan,
+  Repository,
+} from 'typeorm';
 import { SpecialProduct } from './entities/special-product.entity';
 import { CreateSpecialProductInput } from './dto/create-special-product.input';
 import { User } from 'src/user/entities/user.entity';
@@ -367,7 +374,7 @@ export class SpecialProductService {
       updateSpecialProductInput.id,
       // user,
     );
-    const { title, description, price, imageUrl, discount } =
+    const { title, description, price, imageUrl, discount, endingIn } =
       updateSpecialProductInput;
     if (title) {
       product.title = title;
@@ -384,6 +391,9 @@ export class SpecialProductService {
 
     if (imageUrl) {
       product.imageUrl = imageUrl;
+    }
+    if (endingIn) {
+      product.endingIn = endingIn;
     }
 
     if (product.prices && product.prices.length > 0) {
@@ -404,7 +414,21 @@ export class SpecialProductService {
       throw new InternalServerErrorException();
     }
   }
+  async getExpiredSpecialProducts(): Promise<SpecialProduct[]> {
+    const currentTimestamp = new Date();
+    console.log(currentTimestamp);
 
+    const currentTimestampString = currentTimestamp
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+    console.log(currentTimestampString);
+
+    return this.specialProductRepository.find({
+      where: { endingIn: MoreThan(currentTimestampString) },
+      relations: ['user'],
+    });
+  }
   async deleteSpecialProduct(id: string, user: User): Promise<SpecialProduct> {
     try {
       const productFound: SpecialProduct = await this.getSpecialProductUserById(

@@ -6,7 +6,7 @@
 
 // @Resolver(() => Chat)
 // export class ChatResolver {
-//   constructor(private readonly messageService: ChatService) {}
+//   constructor(private  messageService: ChatService) {}
 
 //   @Mutation(() => Chat)
 //   async sendMessage(

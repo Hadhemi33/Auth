@@ -14,8 +14,8 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 @Resolver(() => Category)
 export class CategoryResolver {
   constructor(
-    private readonly categoryService: CategoryService,
-    private readonly userService: UserService,
+    private  categoryService: CategoryService,
+    private  userService: UserService,
   ) {}
 
   @Mutation(() => Category)

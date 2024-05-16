@@ -6,5 +6,10 @@ import { UpdateNotificationInput } from './dto/update-notification.input';
 
 @Resolver(() => Notification)
 export class NotificationResolver {
-  constructor(private readonly notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService) {}
+  @Mutation(() => String)
+  async deleteAllNotification(): Promise<string> {
+    await this.notificationService.deleteAll();
+    return 'All notification deleted successfully';
+  }
 }

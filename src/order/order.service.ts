@@ -10,11 +10,11 @@ import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>,
+    private  orderRepository: Repository<Order>,
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    private  productRepository: Repository<Product>,
     @InjectRepository(OrderHistory) // Inject OrderHistory repository
-    private readonly orderHistoryRepository: Repository<OrderHistory>,
+    private  orderHistoryRepository: Repository<OrderHistory>,
   ) {}
 
   // Recalculate the total price based on the products in the order

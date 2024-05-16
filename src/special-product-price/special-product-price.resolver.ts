@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 @Resolver(() => SpecialProductPrice)
 export class SpecialProductPriceResolver {
   constructor(
-    private readonly specialProductPriceService: SpecialProductPriceService,
+    private  specialProductPriceService: SpecialProductPriceService,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
   ) {}

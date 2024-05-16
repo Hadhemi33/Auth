@@ -2,6 +2,13 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Notification {
+  id: Float!
+  message: String!
+  user: User!
+  specialProductPrice: SpecialProductPrice!
+}
+
 type SpecialProductPrice {
   id: ID!
   price: String!
@@ -127,6 +134,7 @@ type Query {
   specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
   AllspecialProductPrices: [SpecialProductPrice!]!
   getAllOrderHistory: [OrderHistory!]!
+  getNotifications: [Notification!]!
 }
 
 type Mutation {
@@ -161,7 +169,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-16T02:30:17.273Z"
+  createdAt: String! = "2024-05-16T21:16:19.226Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -219,7 +227,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-16T02:30:17.671Z"
+  createdAt: String! = "2024-05-16T21:16:19.604Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -230,7 +238,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-16T02:30:17.671Z"
+  createdAt: String = "2024-05-16T21:16:19.604Z"
   discount: String!
   endingIn: String
   categoryId: String

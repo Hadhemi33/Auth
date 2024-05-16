@@ -44,4 +44,27 @@ export class NotificationService {
   async deleteAll(): Promise<void> {
     await this.notificationRepository.delete({});
   }
+  async removeDuplicateNotifications(): Promise<void> {
+    const notifications = await this.notificationRepository.find({
+      relations: ['user'],
+    });
+    const seen = new Map<string, Notification>();
+
+    for (const notification of notifications) {
+      const key = `${notification.user.id}-${notification.message}`;
+      if (seen.has(key)) {
+        await this.notificationRepository.delete(notification.id);
+      } else {
+        seen.set(key, notification);
+      }
+    }
+  }
+  async getNotifications(): Promise<Notification[]> {
+    return this.notificationRepository.find({ relations: ['user'] });
+  }
+  @Cron('*/30 * * * * *')
+  async handleCron() {
+    this.logger.log('Running cron job to remove duplicate notifications...');
+    await this.removeDuplicateNotifications();
+  }
 }

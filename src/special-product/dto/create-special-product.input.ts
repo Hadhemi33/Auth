@@ -21,4 +21,6 @@ export class CreateSpecialProductInput {
   categoryId: string;
   @Field({ nullable: true })
   imageUrl?: string;
+  @Field({ defaultValue: false, nullable: true })
+  notified: boolean;
 }

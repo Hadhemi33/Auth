@@ -15,6 +15,7 @@ import { CategoryService } from 'src/category/category.service';
 import { Category } from 'src/category/entities/category.entity';
 import { NotificationService } from 'src/notification/notification.service';
 import { Notification } from 'src/notification/entities/notification.entity';
+import { SpecialProductModule } from 'src/special-product/special-product.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Notification } from 'src/notification/entities/notification.entity';
     ]),
     forwardRef(() => AuthModule),
     UserModule,
+    
   ],
   providers: [
     SpecialProductPriceResolver,

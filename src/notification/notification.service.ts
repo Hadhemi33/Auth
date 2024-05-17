@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SpecialProductService } from 'src/special-product/special-product.service';
+import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
 
 @Injectable()
 export class NotificationService {
@@ -14,6 +15,9 @@ export class NotificationService {
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
     private specialProductService: SpecialProductService,
+
+    @InjectRepository(SpecialProductPrice)
+    private specialProductPriceRepository: Repository<SpecialProductPrice>,
   ) {}
 
   async create(notificationData: Partial<Notification>): Promise<Notification> {
@@ -23,17 +27,39 @@ export class NotificationService {
   async sendNotification(userId: string, message: string): Promise<void> {
     console.log(`Notification sent to user ${userId}: ${message}`);
   }
+ 
   @Cron(CronExpression.EVERY_MINUTE)
   async checkExpiredSpecialProducts() {
     const expiredProducts =
       await this.specialProductService.getExpiredSpecialProducts();
+
     try {
+      const currentTime = new Date(); 
       for (const product of expiredProducts) {
-        if (!this.notifiedProducts.has(product.id)) {
+        const endingIn = new Date(product.endingIn); 
+       
+        if (currentTime > endingIn && !this.notifiedProducts.has(product.id)) {
+          console.log('currentTime', currentTime);
+          console.log('endingIn', endingIn);
           const message = `Your special product "${product.title}" has expired.`;
           await this.create({ user: product.user, message });
 
+          const lastBid = await this.specialProductPriceRepository.findOne({
+            where: { specialProduct: { id: product.id } },
+          
+            relations: ['user'],
+          });
+
+          if (lastBid) {
+            console.log(lastBid.user.id);
+            const message = `The special product "${product.title}" you bid on has expired.`;
+            await this.create({ user: lastBid.user, message });
+          }
+
           this.notifiedProducts.add(product.id);
+        
+          product.notified = true;
+          await this.specialProductService.save(product);
         }
       }
     } catch (error) {

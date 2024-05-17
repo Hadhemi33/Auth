@@ -265,7 +265,9 @@ export class SpecialProductService {
     private categoryService: CategoryService,
     // private specialProductPriceService: SpecialProductPriceService,
   ) {}
-
+  async save(product: SpecialProduct): Promise<SpecialProduct> {
+    return this.specialProductRepository.save(product);
+  }
   async createSpecialProduct(
     createSpecialProductInput: CreateSpecialProductInput,
     user: User,
@@ -425,7 +427,7 @@ export class SpecialProductService {
     console.log(currentTimestampString);
 
     return this.specialProductRepository.find({
-      where: { endingIn: MoreThan(currentTimestampString) },
+      where: { endingIn: MoreThan(currentTimestampString), notified: false },
       relations: ['user'],
     });
   }

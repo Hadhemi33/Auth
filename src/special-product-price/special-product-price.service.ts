@@ -14,12 +14,12 @@ import { spec } from 'node:test/reporters';
 export class SpecialProductPriceService {
   constructor(
     @InjectRepository(SpecialProductPrice)
-    private  specialProductPriceRepository: Repository<SpecialProductPrice>,
-    private  specialProductService: SpecialProductService,
+    private specialProductPriceRepository: Repository<SpecialProductPrice>,
+    private specialProductService: SpecialProductService,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
-    private  userService: UserService,
+    private userService: UserService,
   ) {}
 
   async getHigherBids(
@@ -63,6 +63,11 @@ export class SpecialProductPriceService {
       throw new Error('Sorry, you cannot buy yours !!');
     }
 
+    if (specialProduct.notified === true) {
+      throw new Error(
+        'Sorry, you cannot buy this product because it was expired !!',
+      );
+    }
     const price = parseFloat(specialProduct.price);
     const discount = parseFloat(specialProduct.discount);
 
@@ -119,7 +124,15 @@ export class SpecialProductPriceService {
 
     return savedSpecialProductPrice;
   }
-
+  async getLastBidBySpecialProductId(
+    specialProductId: string,
+  ): Promise<SpecialProductPrice | null> {
+    return this.specialProductPriceRepository.findOne({
+      where: { specialProduct: { id: specialProductId } },
+      // order: { createdAt: 'DESC' },
+      relations: ['user'],
+    });
+  }
   async update(
     updateSpecialProductPriceInput: UpdateSpecialProductPriceInput,
   ): Promise<SpecialProductPrice> {

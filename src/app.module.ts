@@ -80,7 +80,6 @@ import { NotificationModule } from './notification/notification.module';
     PaymentModule,
     NotificationModule,
 
-
     // ChatModule,
 
     // EventsModule,

@@ -49,7 +49,9 @@ export class SpecialProduct {
   @Column()
   @Field()
   endingIn: string;
-
+  @Column()
+  @Field({ defaultValue: false })
+  notified: boolean;
   @ManyToOne(() => Category, (category) => category.specialProducts, {
     onDelete: 'SET NULL',
     nullable: true,

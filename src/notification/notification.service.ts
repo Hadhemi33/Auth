@@ -27,17 +27,17 @@ export class NotificationService {
   async sendNotification(userId: string, message: string): Promise<void> {
     console.log(`Notification sent to user ${userId}: ${message}`);
   }
- 
+
   @Cron(CronExpression.EVERY_MINUTE)
   async checkExpiredSpecialProducts() {
     const expiredProducts =
       await this.specialProductService.getExpiredSpecialProducts();
 
     try {
-      const currentTime = new Date(); 
+      const currentTime = new Date();
       for (const product of expiredProducts) {
-        const endingIn = new Date(product.endingIn); 
-       
+        const endingIn = new Date(product.endingIn);
+
         if (currentTime > endingIn && !this.notifiedProducts.has(product.id)) {
           console.log('currentTime', currentTime);
           console.log('endingIn', endingIn);
@@ -46,7 +46,7 @@ export class NotificationService {
 
           const lastBid = await this.specialProductPriceRepository.findOne({
             where: { specialProduct: { id: product.id } },
-          
+
             relations: ['user'],
           });
 
@@ -57,7 +57,7 @@ export class NotificationService {
           }
 
           this.notifiedProducts.add(product.id);
-        
+
           product.notified = true;
           await this.specialProductService.save(product);
         }
@@ -88,9 +88,12 @@ export class NotificationService {
   async getNotifications(): Promise<Notification[]> {
     return this.notificationRepository.find({ relations: ['user'] });
   }
-  @Cron('*/30 * * * * *')
+  async deleteNotification(id: string): Promise<void> {
+    await this.notificationRepository.delete(id);
+  }
+  @Cron('*/10 * * * * *')
   async handleCron() {
-    this.logger.log('Running cron job to remove duplicate notifications...');
+    this.logger.log('Running cron job to remove d uplicate notifications...');
     await this.removeDuplicateNotifications();
   }
 }

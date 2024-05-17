@@ -3,6 +3,7 @@ import { SpecialProductPrice } from 'src/special-product-price/entities/special-
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -17,6 +18,9 @@ export class Notification {
   @Field()
   id: number;
 
+  @CreateDateColumn()
+  @Field()
+  createdAt: Date;
   @Column()
   @Field()
   message: string;

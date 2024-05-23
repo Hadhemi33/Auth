@@ -117,6 +117,8 @@ type SigninResponse {
 }
 
 type Query {
+  getOrderById(id: String!): Order!
+  getAllOrders: [Order!]!
   getAllProducts(userId: String, title: String, price: String, categoryId: String): [Product!]!
   getProduct(id: String!): Product!
   getUser(id: String!): User!
@@ -129,8 +131,6 @@ type Query {
   getCategoryById(id: String!): Category!
   getCategoryByName(name: String!): Category!
   getAllCategories: [Category!]!
-  getOrderById(id: String!): Order!
-  getAllOrders: [Order!]!
   getAllSpecialProducts(userId: String, title: String, price: String, categoryId: String): [SpecialProduct!]!
   expiredSpecialProducts: [SpecialProduct!]!
   specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
@@ -140,6 +140,9 @@ type Query {
 }
 
 type Mutation {
+  addProductToOrder(productId: String!, orderId: String): Order!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+  deleteOrder(id: String!): Boolean!
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
@@ -153,9 +156,6 @@ type Mutation {
   updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): Category!
   deleteAllCategories: Boolean!
   deleteCategory(name: String!): String!
-  addProductToOrder(productId: String!, orderId: String): Order!
-  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
-  deleteOrder(id: String!): Boolean!
   createSpecialProduct(createSpecialProductInput: CreateSpecialProductInput!): SpecialProduct!
   updateSpecialProduct(updateSpecialProductInput: UpdateSpecialProductInput!): SpecialProduct!
   deleteSpecialProduct(id: String!): SpecialProduct!
@@ -164,15 +164,21 @@ type Mutation {
   createSpecialProductPrice(createSpecialProductPriceInput: CreateSpecialProductPriceInput!): SpecialProductPrice!
   updateSpecialProductPrice(updateSpecialProductPriceInput: UpdateSpecialProductPriceInput!): SpecialProductPrice!
   deleteAllSpecialProductPrices: String!
-  createPaymentIntent(amount: Float!, currency: String!): String!
+  createPaymentIntent(orderId: ID!, amount: Float!, currency: String!): String!
   deleteAllNotification: String!
   deleteNotification(id: String!): String!
+}
+
+input UpdateOrderInput {
+  id: String!
+  totalPrice: String
+  paid: Boolean
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-17T14:09:45.981Z"
+  createdAt: String! = "2024-05-23T10:06:59.427Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -220,17 +226,11 @@ input UpdateCategoryInput {
   name: String
 }
 
-input UpdateOrderInput {
-  id: String!
-  totalPrice: String
-  paid: Boolean
-}
-
 input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-17T14:09:46.343Z"
+  createdAt: String! = "2024-05-23T10:06:59.892Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -242,7 +242,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-17T14:09:46.343Z"
+  createdAt: String = "2024-05-23T10:06:59.892Z"
   discount: String!
   endingIn: String
   categoryId: String

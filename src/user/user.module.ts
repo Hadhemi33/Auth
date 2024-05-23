@@ -14,6 +14,11 @@ import { SpecialProductService } from 'src/special-product/special-product.servi
 import { CategoryService } from 'src/category/category.service';
 import { Notification } from 'src/notification/entities/notification.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { OrderService } from 'src/order/order.service';
+import { OrderHistory } from 'src/order-history/entities/order-history.entity';
+import { OrderHistoryService } from 'src/order-history/order-history.service';
+import { PaymentService } from 'src/payment/payment.service';
+import { Payment } from 'src/payment/entities/payment.entity';
 
 @Module({
   imports: [
@@ -25,6 +30,8 @@ import { NotificationService } from 'src/notification/notification.service';
       Notification,
       SpecialProduct,
       SpecialProductPrice,
+      Payment,
+      OrderHistory,
     ]),
     forwardRef(() => AuthModule),
   ],
@@ -35,6 +42,9 @@ import { NotificationService } from 'src/notification/notification.service';
     SpecialProductPriceService,
     SpecialProductService,
     CategoryService,
+    OrderService,
+    PaymentService,
+    OrderHistoryService,
   ],
   exports: [UserService],
 })

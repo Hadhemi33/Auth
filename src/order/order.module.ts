@@ -17,6 +17,8 @@ import { SpecialProductPrice } from 'src/special-product-price/entities/special-
 import { SpecialProductPriceService } from 'src/special-product-price/special-product-price.service';
 import { SpecialProductService } from 'src/special-product/special-product.service';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
+import { Payment } from 'src/payment/entities/payment.entity';
+import { PaymentService } from 'src/payment/payment.service';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
       User,
       Notification,
       Category,
+      Payment,
       OrderHistory,
       SpecialProduct,
       SpecialProductPrice,
@@ -35,6 +38,7 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
     OrderResolver,
     OrderService,
     ProductService,
+    PaymentService,
     UserService,
     CategoryService,
     SpecialProductService,
@@ -42,5 +46,6 @@ import { SpecialProduct } from 'src/special-product/entities/special-product.ent
     OrderHistoryService,
     NotificationService,
   ],
+  exports: [OrderService],
 })
 export class OrderModule {}

@@ -10,11 +10,11 @@ import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private  orderRepository: Repository<Order>,
+    private orderRepository: Repository<Order>,
     @InjectRepository(Product)
-    private  productRepository: Repository<Product>,
+    private productRepository: Repository<Product>,
     @InjectRepository(OrderHistory) // Inject OrderHistory repository
-    private  orderHistoryRepository: Repository<OrderHistory>,
+    private orderHistoryRepository: Repository<OrderHistory>,
   ) {}
 
   // Recalculate the total price based on the products in the order
@@ -39,6 +39,16 @@ export class OrderService {
 
     return this.orderRepository.save(newOrder); // Save and return the new order
   }
+  getRepository() {
+    return this.orderRepository;
+  }
+  // async findOne(orderId: string): Promise<Order> {
+  //   return this.orderRepository.findOne(orderId);
+  // }
+
+  // async save(order: Order): Promise<Order> {
+  //   return this.orderRepository.save(order);
+  // }
   async getOrCreateOrderForUser(user: User): Promise<Order> {
     let order = await this.orderRepository.findOne({
       where: { user: { id: user.id } },

@@ -15,12 +15,35 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { Product } from 'src/product/entities/product.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { SetMetadata, UseGuards } from '@nestjs/common';
+import { SetMetadata, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private usersService: UserService) {}
+
+  @Mutation(() => Boolean)
+  async requestPasswordReset(
+    @Args('username') username: string,
+  ): Promise<boolean> {
+    return this.usersService.requestPasswordReset(username);
+  }
+  @Mutation(() => Boolean)
+  async verifyResetCode(
+    @Args('username') username: string,
+    @Args('code') code: string,
+  ): Promise<boolean> {
+    return this.usersService.verifyResetCode(username, code);
+  }
+  @Mutation(() => Boolean)
+  async resetPassword(
+    @Args('username') username: string,
+    @Args('code') code: string,
+    @Args('newPassword') newPassword: string,
+  ): Promise<boolean> {
+    return this.usersService.resetPassword(username, code, newPassword);
+  }
+
   @Mutation(() => User)
   @UseGuards(JwtAuthGuard)
   async updateUser(

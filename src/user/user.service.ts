@@ -4,18 +4,20 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import * as nodemailer from 'nodemailer';
 import { SignupResponse } from 'src/auth/dto/signup-response';
-
+import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { SignupUserInput } from 'src/auth/dto/signup-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { NotificationService } from 'src/notification/notification.service';
 import { SpecialProductPrice } from 'src/special-product-price/entities/special-product-price.entity';
-
+import { v4 as uuidv4 } from 'uuid';
+import * as moment from 'moment';
 @Injectable()
 export class UserService {
   constructor(
@@ -24,17 +26,105 @@ export class UserService {
     @InjectRepository(SpecialProductPrice)
     private specialProductPriceRepository: Repository<SpecialProductPrice>,
   ) {}
- 
+  async findOne(conditions: any): Promise<User> {
+    return this.usersRepository.findOne(conditions);
+  }
+
+  async save(user: User): Promise<User> {
+    return this.usersRepository.save(user);
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
+  private async generateVerificationCode(user: User): Promise<string> {
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000,
+    ).toString();
+    const expiryDate = new Date(Date.now() + 3600 * 1000); // 1 hour expiry
+    user.resetPasswordToken = verificationCode;
+    user.resetPasswordTokenExpiry = expiryDate;
+    await this.save(user);
+    return verificationCode;
+  }
+  async requestPasswordReset(username: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ where: { username } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const resetToken = uuidv4();
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + 1);
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordTokenExpiry = expiryDate;
+    await this.usersRepository.save(user);
+
+    await this.sendPasswordResetEmail(username, resetToken);
+    return true;
+  }
+  async verifyResetCode(username: string, code: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { username, resetPasswordToken: code },
+    });
+    if (!user || user.resetPasswordTokenExpiry < new Date()) {
+      throw new UnauthorizedException('Invalid or expired verification code');
+    }
+    return true;
+  }
+  async sendPasswordResetEmail(
+    username: string,
+    verificationCode: string,
+  ): Promise<void> {
+    const transporter = nodemailer.createTransport({
+      // host: 'live.smtp.mailtrap.io',
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'hadhemi.benmansour@isimg.tn',
+        // user: 'api',
+        // pass: '80f2fd075c3505c43d6286246169d6fa',
+        pass: 'aY3rFTjRkbGACPUf',
+      },
+    });
+
+    const mailOptions = {
+      from: 'Contact@BidFlick.com',
+      to: username,
+      subject: 'Verification Code for Password Reset',
+      text: `Your verification code is: ${verificationCode}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+  }
+  async resetPassword(
+    username: string,
+    code: string,
+    newPassword: string,
+  ): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { username, resetPasswordToken: code },
+    });
+    if (!user || user.resetPasswordTokenExpiry < new Date()) {
+      throw new UnauthorizedException('Invalid or expired verification code');
+    }
+
+    user.password = await this.hashPassword(newPassword);
+    user.resetPasswordToken = null;
+    user.resetPasswordTokenExpiry = null;
+    await this.usersRepository.save(user);
+    return true;
+  }
   async sendNotification(
     userId: string,
     message: string,
     specialProductPriceId?: string,
   ): Promise<void> {
     try {
- 
       console.log(`Sending notification to user ${userId}: ${message}`);
 
- 
       const user = await this.usersRepository.findOne({
         where: { id: userId },
       });
@@ -47,7 +137,6 @@ export class UserService {
       }
 
       if (specialProductPriceId) {
-      
         if (!specialProductPrice) {
           throw new NotFoundException(
             `Special product price with ID ${specialProductPriceId} not found.`,

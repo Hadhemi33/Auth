@@ -149,6 +149,9 @@ type Mutation {
   deleteProductAdmin(id: String!): Product!
   signup(signupUserInput: SignupUserInput!): SignupResponse!
   signin(loginUserInput: SigninUserInput!): SigninResponse!
+  requestPasswordReset(username: String!): Boolean!
+  verifyResetCode(username: String!, code: String!): Boolean!
+  resetPassword(username: String!, code: String!, newPassword: String!): Boolean!
   updateUser(updateUserInput: UpdateUserInput!): User!
   updateUserRole(updateUserInput: UpdateUserInput!, id: String!): User!
   deleteUser(id: String!): Boolean!
@@ -178,7 +181,7 @@ input UpdateOrderInput {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-23T10:06:59.427Z"
+  createdAt: String! = "2024-05-23T22:52:49.464Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -230,7 +233,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-23T10:06:59.892Z"
+  createdAt: String! = "2024-05-23T22:52:49.998Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -242,7 +245,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-23T10:06:59.892Z"
+  createdAt: String = "2024-05-23T22:52:49.998Z"
   discount: String!
   endingIn: String
   categoryId: String

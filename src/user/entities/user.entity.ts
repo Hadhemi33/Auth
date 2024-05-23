@@ -82,4 +82,9 @@ export class User {
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  @Column({ nullable: true })
+  resetPasswordTokenExpiry: Date;
 }

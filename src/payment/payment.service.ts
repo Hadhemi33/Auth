@@ -69,9 +69,14 @@ export class PaymentService {
       if (!order) {
         throw new Error('Order not found');
       }
+      if (order.paid === true) {
+        throw new Error('deja payé');
+      }
+      // Stripe expects amount in the smallest currency unit
+      const amountInCents = Math.round(amount * 100);
 
       const paymentIntent = await this.stripe.paymentIntents.create({
-        amount,
+        amount: amountInCents,
         currency,
       });
 

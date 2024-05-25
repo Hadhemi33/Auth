@@ -11,10 +11,7 @@ import { Product } from './entities/product.entity';
 import { Repository, Between, Like } from 'typeorm';
 
 import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
 import { CategoryService } from 'src/category/category.service';
-import { ProductStatus } from './product-status.enum';
-import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
@@ -24,17 +21,7 @@ export class ProductService {
     private categoryService: CategoryService,
   ) {}
 
-  /////////////////////////createProduct/////////////////////////
 
-  // async create(
-  //   createProductInput: CreateProductInput,
-  //   user: User,
-  // ): Promise<Product> {
-  //   const newProduct = this.productRepository.create(createProductInput);
-  //   newProduct.user = user; // Assigning the user who created the product
-
-  //   return this.productRepository.save(newProduct); // Save the product to the database
-  // }
 
   async create(
     createProductInput: CreateProductInput,
@@ -117,56 +104,32 @@ export class ProductService {
 
   ///////////////////////////deleteProduct/////////////////////////
 
-  // async deleteProduct(id: string, user: User): Promise<Product> {
-  //   const productFound: Product = await this.getProductUserById(id, user);
-
-  //   const removedProductId = productFound.id;
-  //   console.log('eeeeeeeeeeeeeeeeee', user.fullName);
-
-  //   if (user.roles === 'admin' || user.id === productFound.user.id) {
-  //     const result: Product = await this.productRepository.remove(productFound);
-  //     console.log(user.fullName);
-
-  //     if (!result) {
-  //       throw new NotFoundException(`Product with id ${id} not found`);
-  //     }
-  //     result.id = removedProductId;
-  //     return result;
-  //   }
-  //   throw new UnauthorizedException(
-  //     'You are not authorized to delete this product',
-  //   );
-  // }
   async deleteProduct(id: string, user: User): Promise<Product> {
     try {
-      // Retrieve the product based on the provided ID and user
       const productFound: Product = await this.getProductUserById(id, user);
 
-      // Store the ID of the product being removed
       const removedProductId = productFound.id;
 
-      // Check if the user has the necessary permissions to delete the product
       if (user.roles === 'admin' || user.id === productFound.user.id) {
-        // Remove the product from the database
         const result: Product =
           await this.productRepository.remove(productFound);
 
-        // Throw an error if the product was not found in the database
+
         if (!result) {
           throw new NotFoundException(`Product with id ${id} not found`);
         }
 
-        // Restore the original ID of the removed product and return it
+       
         result.id = removedProductId;
         return result;
       } else {
-        // Throw an error if the user is not authorized to delete the product
+  
         throw new UnauthorizedException(
           'You are not authorized to delete this product',
         );
       }
     } catch (error) {
-      // Catch any errors that occur during the deletion process
+
       console.error('Error deleting product:', error);
       throw new InternalServerErrorException(
         'An error occurred while deleting the product.',
@@ -190,14 +153,15 @@ export class ProductService {
 
   ///////////////////////////UpdateProduct/////////////////////////
   async updateProductt(product: Product): Promise<Product> {
-    return this.productRepository.save(product); // Update the product in the database
+    return this.productRepository.save(product); 
   }
   async updateProduct(
     updateProductInput: UpdateProductInput,
     user: User,
   ): Promise<Product> {
     const product = await this.getProductUserById(updateProductInput.id, user);
-    const { title, description, status, price, imageUrl } = updateProductInput;
+    const { title, description, status, price, imageUrl, nbrLike } =
+      updateProductInput;
     if (title) {
       product.title = title;
     }
@@ -213,6 +177,9 @@ export class ProductService {
 
     if (imageUrl) {
       product.imageUrl = imageUrl;
+    }
+    if (nbrLike) {
+      product.nbrLike = nbrLike;
     }
     try {
       await this.productRepository.save(product);
@@ -232,7 +199,7 @@ export class ProductService {
 
   async deleteProductAdmin(id: string, user: User): Promise<Product> {
     try {
-      // Retrieve the product based on the provided ID and user
+    
       const productFound: Product = await this.getProductById(id);
 
       const removedProductId = productFound.id;

@@ -1,36 +1,4 @@
-// import { Injectable } from '@nestjs/common';
-// import { CreatePaymentInput } from './dto/create-payment.input';
-// import { UpdatePaymentInput } from './dto/update-payment.input';
-// import Stripe from 'stripe';
-// import { ConfigService } from '@nestjs/config';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Order } from 'src/order/entities/order.entity';
-// import { Repository } from 'typeorm';
-// @Injectable()
-// export class PaymentService {
-//   private stripe: Stripe;
 
-//   constructor(private configService: ConfigService ,
-//     @InjectRepository(Order) private orderRepository: Repository<Order>,
-//   ) {
-//     this.stripe = new Stripe(
-//       this.configService.get<string>('STRIPE_SECRET_KEY'),
-//       {
-//         apiVersion: '2024-04-10',
-//       },
-//     );
-//   }
-
-//   async createPaymentIntent(
-//     amount: number,
-//     currency: string,
-//   ): Promise<Stripe.PaymentIntent> {
-//     return await this.stripe.paymentIntents.create({
-//       amount,
-//       currency,
-//     });
-//   }
-// }
 import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { ConfigService } from '@nestjs/config';
@@ -72,7 +40,7 @@ export class PaymentService {
       if (order.paid === true) {
         throw new Error('deja payé');
       }
-      // Stripe expects amount in the smallest currency unit
+   
       const amountInCents = Math.round(amount * 100);
 
       const paymentIntent = await this.stripe.paymentIntents.create({

@@ -19,12 +19,10 @@ export class OrderHistory {
   @Field()
   @Column()
   totalPrice: string;
-  // @Field()
-  // @ManyToOne(() => User, { eager: true })
-  // @JoinColumn({ name: 'user_id' })
-  // user: User;
-  @ManyToOne(() => User, (user) => user.OrderHistories)
+
+  @ManyToOne(() => User, (user) => user.OrderHistories, { eager: true })
   @Field(() => User)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @Field()

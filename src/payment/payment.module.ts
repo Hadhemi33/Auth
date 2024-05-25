@@ -11,6 +11,8 @@ import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { OrderModule } from 'src/order/order.module';
+import { OrderHistoryResolver } from 'src/order-history/order-history.resolver';
+import { OrderHistoryService } from 'src/order-history/order-history.service';
 
 @Module({
   imports: [
@@ -20,6 +22,11 @@ import { OrderModule } from 'src/order/order.module';
     OrderModule,
   ],
 
-  providers: [PaymentResolver, PaymentService, OrderService],
+  providers: [
+    PaymentResolver,
+    PaymentService,
+    OrderHistoryService,
+    OrderService,
+  ],
 })
 export class PaymentModule {}

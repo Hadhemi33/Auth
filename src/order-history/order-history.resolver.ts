@@ -11,7 +11,7 @@ export class OrderHistoryResolver {
   constructor(private  orderHistoryService: OrderHistoryService) {}
 
   @Query(() => [OrderHistory])
-  @UseGuards(JwtAuthGuard) // If needed, use guards for security
+  @UseGuards(JwtAuthGuard) 
   async getAllOrderHistory(): Promise<OrderHistory[]> {
     return this.orderHistoryService.findAllOrderHistory();
   }

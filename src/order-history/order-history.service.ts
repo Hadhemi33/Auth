@@ -8,10 +8,10 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class OrderHistoryService {
   constructor(
-    @InjectRepository(OrderHistory) 
-    private  orderHistoryRepository: Repository<OrderHistory>, // Inject OrderHistory repository
+    @InjectRepository(OrderHistory)
+    private orderHistoryRepository: Repository<OrderHistory>, 
   ) {}
   async findAllOrderHistory(): Promise<OrderHistory[]> {
-    return this.orderHistoryRepository.find();
+    return this.orderHistoryRepository.find({ relations: ['user'] });
   }
 }

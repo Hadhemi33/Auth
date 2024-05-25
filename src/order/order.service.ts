@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/product/entities/product.entity';
 import { Repository } from 'typeorm';
 import { OrderHistory } from 'src/order-history/entities/order-history.entity';
+import { OrderHistoryService } from 'src/order-history/order-history.service';
 
 @Injectable()
 export class OrderService {
@@ -13,42 +14,22 @@ export class OrderService {
     private orderRepository: Repository<Order>,
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @InjectRepository(OrderHistory) // Inject OrderHistory repository
+    @InjectRepository(OrderHistory)
     private orderHistoryRepository: Repository<OrderHistory>,
+    private orderHistoryService: OrderHistoryService,
   ) {}
 
-  // Recalculate the total price based on the products in the order
   async recalculateTotalPrice(order: Order): Promise<Order> {
     const totalPrice = order.products.reduce((sum, product) => {
-      return sum + parseFloat(product.price); // Ensure price is converted to number
-    }, 0); // Initialize with zero
+      return sum + parseFloat(product.price);
+    }, 0);
 
-    order.totalPrice = totalPrice.toFixed(2); // Format to two decimal places
-    return this.orderRepository.save(order); // Save the updated order with new total price
-  }
-
-  // Get or create an order for a user
-  async createOrderForUser(user: User): Promise<Order> {
-    const newOrder = this.orderRepository.create({
-      createdAt: new Date().toISOString(),
-      user,
-      totalPrice: '0.00', // Default initial total price
-      products: [],
-      paid: false, // Default to unpaid
-    });
-
-    return this.orderRepository.save(newOrder); // Save and return the new order
+    order.totalPrice = totalPrice.toFixed(2);
+    return this.orderRepository.save(order);
   }
   getRepository() {
     return this.orderRepository;
   }
-  // async findOne(orderId: string): Promise<Order> {
-  //   return this.orderRepository.findOne(orderId);
-  // }
-
-  // async save(order: Order): Promise<Order> {
-  //   return this.orderRepository.save(order);
-  // }
   async getOrCreateOrderForUser(user: User): Promise<Order> {
     let order = await this.orderRepository.findOne({
       where: { user: { id: user.id } },
@@ -56,23 +37,20 @@ export class OrderService {
       relations: ['products'],
     });
 
-    // If there's an existing order and it's unpaid, return it
     if (order && !order.paid) {
       return order;
     }
-
-    // Otherwise, create a new order
     order = this.orderRepository.create({
       createdAt: new Date().toISOString(),
       user,
-      totalPrice: '0.00', // Default total price
+      totalPrice: '0.00',
       products: [],
-      paid: false, // New orders start unpaid
+      paid: false,
     });
 
     return this.orderRepository.save(order);
   }
-  // Get order by ID
+
   async getOrderById(id: string): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id },
@@ -86,15 +64,15 @@ export class OrderService {
     return order;
   }
 
-  // Update order and recalculate the total price
   async updateOrder(order: Order): Promise<Order> {
     order = await this.recalculateTotalPrice(order);
     return this.orderRepository.save(order);
   }
-  async saveOrderToHistory(order: Order): Promise<void> {
+
+  async saveOrderToHistory(order: Order, userId: string): Promise<void> {
     const historyEntry = new OrderHistory();
     historyEntry.totalPrice = order.totalPrice;
-    historyEntry.user = order.user;
+    historyEntry.user.id = userId;
     historyEntry.paidAt = new Date();
 
     historyEntry.products = order.products.map((product) => {
@@ -114,45 +92,39 @@ export class OrderService {
       ),
     );
   }
-  // Delete order if paid
-  // async deleteOrderIfPaid(order: Order): Promise<void> {
-  //   if (order.paid) {
-  //     await this.orderRepository.delete(order.id);
-  //   }
-  // }
-  async deleteOrderIfPaid(order: Order): Promise<void> {
-    if (order.paid) {
-      // Remove the reference to the order from products
-      await Promise.all(
-        order.products.map(async (product) => {
-          product.order = null; // Clear the reference to the order
-          await this.productRepository.save(product); // Save the product with the cleared reference
-        }),
-      );
 
-      await this.saveOrderToHistory(order); // Save to history before deleting
-      await this.orderRepository.delete(order.id); // Delete the original order
-    }
+  async validateOrder(orderId: string): Promise<void> {
+    const order = await this.getOrderById(orderId);
+    const userId = order.products.length > 0 ? order.products[0].user.id : null;
+
+    await this.saveOrderToHistory(order, userId);
+
+    await this.orderRepository.delete(order.id);
+
+    await Promise.all(
+      order.products.map((product) =>
+        this.productRepository.delete(product.id),
+      ),
+    );
   }
 
-  // Find all orders
   async findAll(): Promise<Order[]> {
     return this.orderRepository.find({
       relations: ['user', 'products'],
     });
   }
+
   async deleteOrder(id: string): Promise<void> {
     const order = await this.getOrderById(id);
 
-    // Check if the order has products and delete them
-    if (order.products && order.products.length > 0) {
-      console.log('Deleting associated products...'); // Debugging information
-      for (const product of order.products) {
-        await this.productRepository.delete(product.id); // Delete the product
-      }
-    }
+    await Promise.all(
+      order.products.map(async (product) => {
+        product.order = null;
+        await this.productRepository.save(product);
+      }),
+    );
 
-    console.log('Deleting the order...'); // Debugging information
-    await this.orderRepository.delete(id); // Delete the order
+    console.log('Deleting the order...');
+    await this.orderRepository.delete(id);
   }
 }

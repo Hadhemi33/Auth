@@ -141,8 +141,8 @@ type Query {
 
 type Mutation {
   addProductToOrder(productId: String!, orderId: String): Order!
-  validateOrder(orderId: ID!): Boolean!
-  deleteOrder(orderId: ID!): Boolean!
+  validateOrder(orderId: String!): Boolean!
+  deleteOrder(orderId: String!): Boolean!
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   deleteProduct(id: String!): Product!
@@ -175,7 +175,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-25T03:11:16.167Z"
+  createdAt: String! = "2024-05-25T22:33:24.996Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -227,7 +227,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-25T03:11:18.100Z"
+  createdAt: String! = "2024-05-25T22:33:25.726Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -239,7 +239,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-25T03:11:18.100Z"
+  createdAt: String = "2024-05-25T22:33:25.726Z"
   discount: String!
   endingIn: String
   categoryId: String

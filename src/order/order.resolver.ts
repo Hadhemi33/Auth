@@ -53,14 +53,18 @@ export class OrderResolver {
   }
 
   @Mutation(() => Boolean)
-  async validateOrder(@Args('orderId', { type: () => ID }) orderId: string) {
+  @UseGuards(JwtAuthGuard)
+  async validateOrder(
+    @Args('orderId', { type: () => String }) orderId: string,
+  ) {
     await this.orderService.validateOrder(orderId);
     return true;
   }
 
   @Mutation(() => Boolean)
-  async deleteOrder(@Args('orderId', { type: () => ID }) orderId: string) {
+  @UseGuards(JwtAuthGuard)
+  async deleteOrder(@Args('orderId', { type: () => String }) orderId: string) {
     await this.orderService.deleteOrder(orderId);
-    return true; 
+    return true;
   }
 }

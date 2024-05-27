@@ -1,10 +1,46 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "E:\\PFE\\BidFlick\\Auth\\contracts\\Token.sol": {
-      "lastModificationDate": 1716674239561,
-      "contentHash": "a15cc29af9351317de718c6b4d0857bc",
-      "sourceName": "contracts/Token.sol",
+    "E:\\PFE\\BidFlick\\Auth\\node_modules\\hardhat\\console.sol": {
+      "lastModificationDate": 1716671353495,
+      "contentHash": "896f68942c3a20e9ae3c3c5bfd3add54",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "E:\\PFE\\BidFlick\\Auth\\contracts\\Auction.sol": {
+      "lastModificationDate": 1716852231825,
+      "contentHash": "edbb8c6ae91c96395f70b1885708247f",
+      "sourceName": "contracts/Auction.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -34,7 +70,7 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Token"
+        "Auction"
       ]
     }
   }

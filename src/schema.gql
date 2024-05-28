@@ -135,6 +135,7 @@ type Query {
   expiredSpecialProducts: [SpecialProduct!]!
   specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
   AllspecialProductPrices: [SpecialProductPrice!]!
+  getWinner: String!
   getAllOrderHistory: [OrderHistory!]!
   getNotifications: [Notification!]!
 }
@@ -167,6 +168,7 @@ type Mutation {
   createSpecialProductPrice(createSpecialProductPriceInput: CreateSpecialProductPriceInput!): SpecialProductPrice!
   updateSpecialProductPrice(updateSpecialProductPriceInput: UpdateSpecialProductPriceInput!): SpecialProductPrice!
   deleteAllSpecialProductPrices: String!
+  endAuction: String!
   createPaymentIntent(orderId: ID!, amount: Float!, currency: String!): String!
   deleteAllNotification: String!
   deleteNotification(id: String!): String!
@@ -175,7 +177,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-25T22:33:24.996Z"
+  createdAt: String! = "2024-05-28T15:56:02.823Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -227,7 +229,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-25T22:33:25.726Z"
+  createdAt: String! = "2024-05-28T15:56:03.825Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -239,7 +241,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-25T22:33:25.726Z"
+  createdAt: String = "2024-05-28T15:56:03.825Z"
   discount: String!
   endingIn: String
   categoryId: String

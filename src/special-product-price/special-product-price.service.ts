@@ -3,15 +3,17 @@ import { CreateSpecialProductPriceInput } from './dto/create-special-product-pri
 import { UpdateSpecialProductPriceInput } from './dto/update-special-product-price.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpecialProductPrice } from './entities/special-product-price.entity';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { SpecialProductService } from 'src/special-product/special-product.service';
 import { UserService } from 'src/user/user.service';
-import { spec } from 'node:test/reporters';
-
+import { ethers } from 'ethers';
+// import AuctionABI from '../../artifacts/contracts/Auction.sol/';
 @Injectable()
 export class SpecialProductPriceService {
+  private provider: ethers.JsonRpcProvider;
+  private contract: ethers.Contract;
   constructor(
     @InjectRepository(SpecialProductPrice)
     private specialProductPriceRepository: Repository<SpecialProductPrice>,
@@ -20,7 +22,142 @@ export class SpecialProductPriceService {
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
     private userService: UserService,
-  ) {}
+  ) {
+    // Initialize ethers provider and contract
+    this.provider = new ethers.JsonRpcProvider(
+      'https://sepolia.infura.io/v3/cf8c01ab331948e4b5df67110ae6d7a1',
+    );
+    const auctionAddress = '0x682E42bf7A6436DF33a5e2B0f93e9A31e81183A7';
+    const signer = new ethers.Wallet(
+      'dfe47c099fffd0458fc770a60b54da8ae9bdeff3832995db87822171dbd9f973',
+      this.provider,
+    );
+    const abi = [
+      {
+        inputs: [
+          {
+            internalType: 'uint256',
+            name: '_biddingTime',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'constructor',
+      },
+      {
+        inputs: [],
+        name: 'bid',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
+      },
+      {
+        inputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        name: 'bidders',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'endAuction',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'endTime',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'ended',
+        outputs: [
+          {
+            internalType: 'bool',
+            name: '',
+            type: 'bool',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'getWinner',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'highestBid',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'owner',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'winner',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ];
+    this.contract = new ethers.Contract(auctionAddress, abi, signer);
+  }
 
   async getHigherBids(
     specialProductId: string,
@@ -43,7 +180,7 @@ export class SpecialProductPriceService {
     }
   }
 
-  async create(
+  async placeBid(
     createSpecialProductPriceInput: CreateSpecialProductPriceInput,
     user: User,
   ): Promise<SpecialProductPrice> {
@@ -68,20 +205,23 @@ export class SpecialProductPriceService {
         'Sorry, you cannot buy this product because it was expired !!',
       );
     }
-    const price = parseFloat(specialProduct.price);
+    // const price = parseFloat(specialProduct.price);
+    const enteredPrice = ethers.parseEther(specialProduct.price);
     const discount = parseFloat(specialProduct.discount);
 
-    let minimumPrice = price;
-    if (!isNaN(discount)) {
-      minimumPrice -= (discount / 100) * price;
-    }
-    const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
+    // let minimumPrice = price;
+    // if (!isNaN(discount)) {
+    //   minimumPrice -= (discount / 100) * price;
+    // }
+    // const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
 
     const previousBids = await this.getHigherBids(
       specialProduct.id,
       // enteredPrice,
     );
-
+    // Place bid on the smart contract
+    const tx = await this.contract.bid({ value: enteredPrice });
+    await tx.wait();
     const specialProductPrice = this.specialProductPriceRepository.create({
       ...createSpecialProductPriceInput,
       price: createSpecialProductPriceInput.price,
@@ -123,6 +263,14 @@ export class SpecialProductPriceService {
       .add(savedSpecialProductPrice);
 
     return savedSpecialProductPrice;
+  }
+  async endAuction(): Promise<void> {
+    const tx = await this.contract.endAuction();
+    await tx.wait();
+  }
+
+  async getWinner(): Promise<string> {
+    return this.contract.getWinner();
   }
   async getLastBidBySpecialProductId(
     specialProductId: string,

@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 @Resolver(() => SpecialProductPrice)
 export class SpecialProductPriceResolver {
   constructor(
-    private  specialProductPriceService: SpecialProductPriceService,
+    private specialProductPriceService: SpecialProductPriceService,
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
   ) {}
@@ -46,42 +46,11 @@ export class SpecialProductPriceResolver {
         `Sorry, you cannot buy this product at a price lower than ${futurPrice}`,
       );
     }
-    return this.specialProductPriceService.create(
+    return this.specialProductPriceService.placeBid(
       createSpecialProductPriceInput,
       user,
     );
   }
-  // @Mutation(() => SpecialProductPrice)
-  // @UseGuards(JwtAuthGuard)
-  // async createSpecialProductPrice(
-  //   @Args('createSpecialProductPriceInput')
-  //   createSpecialProductPriceInput: CreateSpecialProductPriceInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SpecialProductPrice | Error> {
-  //   const specialProduct = await this.specialProductRepository.findOne({
-  //     where: { id: createSpecialProductPriceInput.specialProductId },
-  //   });
-
-  //   if (!specialProduct) {
-  //     throw new Error('Special product not found.');
-  //   }
-
-  //   const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
-  //   const actualPrice = parseFloat(specialProduct.price);
-  //   const discountPrice =
-  //     actualPrice - (parseFloat(specialProduct.discount) / 100) * actualPrice;
-
-  //   if (enteredPrice < discountPrice) {
-  //     throw new Error(
-  //       `Sorry, you cannot buy this product at a price lower than ${discountPrice}`,
-  //     );
-  //   }
-
-  //   return this.specialProductPriceService.create(
-  //     createSpecialProductPriceInput,
-  //     user,
-  //   );
-  // }
 
   @Mutation(() => SpecialProductPrice)
   async updateSpecialProductPrice(
@@ -108,5 +77,15 @@ export class SpecialProductPriceResolver {
   async deleteAllSpecialProductPrices(): Promise<string> {
     await this.specialProductPriceService.deleteAll();
     return 'All special product prices deleted successfully';
+  }
+  @Mutation(() => String)
+  async endAuction(): Promise<string> {
+    await this.specialProductPriceService.endAuction();
+    return 'Auction ended successfully';
+  }
+
+  @Query(() => String)
+  async getWinner(): Promise<string> {
+    return this.specialProductPriceService.getWinner();
   }
 }

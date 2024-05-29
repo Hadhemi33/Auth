@@ -286,6 +286,7 @@ export class SpecialProductService {
       );
       specialProduct.user = user;
       specialProduct.category = category;
+      specialProduct.user.address = user.address; // Save owner's wallet address
       const savedSpecialProduct =
         await this.specialProductRepository.save(specialProduct);
       return savedSpecialProduct;

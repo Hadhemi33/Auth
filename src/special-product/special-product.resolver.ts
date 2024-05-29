@@ -60,6 +60,10 @@ export class SpecialProductResolver {
       user,
     );
   }
+  @Query(() => SpecialProduct)
+  async specialProduct(@Args('id') id: string): Promise<SpecialProduct> {
+    return this.specialProductService.getSpecialProductById(id);
+  }
   @Query(() => [SpecialProduct], { name: 'expiredSpecialProducts' })
   async getExpiredSpecialProducts(): Promise<SpecialProduct[]> {
     return this.specialProductService.getExpiredSpecialProducts();

@@ -80,6 +80,7 @@ type User {
   likedProducts: [Product!]
   likedSpecialProducts: [SpecialProduct!]
   specialProductPrices: [SpecialProductPrice!]!
+  address: String
 }
 
 type Product {
@@ -132,10 +133,13 @@ type Query {
   getCategoryByName(name: String!): Category!
   getAllCategories: [Category!]!
   getAllSpecialProducts(userId: String, title: String, price: String, categoryId: String): [SpecialProduct!]!
+  specialProduct(id: String!): SpecialProduct!
   expiredSpecialProducts: [SpecialProduct!]!
   specialProductPrices(specialProductId: String!): [SpecialProductPrice!]!
+  getHigherBids(specialProductId: String!): SpecialProductPrice!
   AllspecialProductPrices: [SpecialProductPrice!]!
   getWinner: String!
+  getOwner: String!
   getAllOrderHistory: [OrderHistory!]!
   getNotifications: [Notification!]!
 }
@@ -177,7 +181,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-28T15:56:02.823Z"
+  createdAt: String! = "2024-05-29T21:38:44.767Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -215,6 +219,7 @@ input UpdateUserInput {
   phoneNumber: String
   roles: String
   imageUrl: String
+  address: String
 }
 
 input CreateCategoryInput {
@@ -229,7 +234,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-28T15:56:03.825Z"
+  createdAt: String! = "2024-05-29T21:38:45.331Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -241,7 +246,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-28T15:56:03.825Z"
+  createdAt: String = "2024-05-29T21:38:45.331Z"
   discount: String!
   endingIn: String
   categoryId: String

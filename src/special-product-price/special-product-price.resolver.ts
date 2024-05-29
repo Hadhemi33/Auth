@@ -69,6 +69,11 @@ export class SpecialProductPriceResolver {
       specialProductId,
     );
   }
+  @Query(() => SpecialProductPrice)
+  async getHigherBids(@Args('specialProductId') specialProductId: string) {
+    return this.specialProductPriceService.getHigherBids(specialProductId);
+  }
+
   @Query(() => [SpecialProductPrice])
   async AllspecialProductPrices() {
     return this.specialProductPriceService.findAll();
@@ -87,5 +92,9 @@ export class SpecialProductPriceResolver {
   @Query(() => String)
   async getWinner(): Promise<string> {
     return this.specialProductPriceService.getWinner();
+  }
+  @Query(() => String)
+  async getOwner(): Promise<string> {
+    return this.specialProductPriceService.getOwner();
   }
 }

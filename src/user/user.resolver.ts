@@ -21,6 +21,12 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 @Resolver(() => User)
 export class UserResolver {
   constructor(private usersService: UserService) {}
+  // @Mutation(returns => User)
+  // async updateUser2(
+  //   @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  // ): Promise<User> {
+  //   return this.usersService.updateUser(updateUserInput.id, updateUserInput);
+  // }
 
   @Mutation(() => Boolean)
   async requestPasswordReset(

@@ -26,6 +26,18 @@ export class UserService {
     @InjectRepository(SpecialProductPrice)
     private specialProductPriceRepository: Repository<SpecialProductPrice>,
   ) {}
+  async updateUser(
+    id: string,
+    updateUserInput: UpdateUserInput,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    Object.assign(user, updateUserInput);
+    return this.usersRepository.save(user);
+  }
   async findOne(conditions: any): Promise<User> {
     return this.usersRepository.findOne(conditions);
   }
@@ -280,7 +292,8 @@ export class UserService {
 
     const found = await this.getUser(user.id);
 
-    const { username, fullName, phoneNumber, imageUrl } = updateUserInput;
+    const { username, fullName, phoneNumber, imageUrl, address } =
+      updateUserInput;
 
     if (username) {
       found.username = username.trim();
@@ -293,6 +306,9 @@ export class UserService {
     }
     if (imageUrl) {
       found.imageUrl = imageUrl.trim();
+    }
+    if (address) {
+      found.address = address.trim();
     }
 
     try {

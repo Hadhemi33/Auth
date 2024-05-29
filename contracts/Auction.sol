@@ -3,14 +3,15 @@ pragma solidity ^0.8.0;
 
 contract Auction {
     address public owner;
-    address public winner;
+    mapping(address => uint) public bids;
     address[] public bidders;
-    uint public highestBid;
     uint public endTime;
     bool public ended;
 
-    constructor(uint _biddingTime) {
-        owner = msg.sender;
+    address public lastBidder;
+
+    constructor(uint _biddingTime, address _owner) {
+        owner = _owner;
         endTime = block.timestamp + _biddingTime;
     }
 
@@ -20,17 +21,15 @@ contract Auction {
     }
 
     function bid() public payable {
-        require(msg.value > highestBid, "Bid not enough");
-        require(msg.sender != owner, "Owner can't bid");
         require(block.timestamp < endTime, "Auction has ended");
+        require(msg.value > bids[msg.sender], "Bid not enough");
 
-        if (highestBid != 0) {
-            payable(winner).transfer(highestBid);
+        if (bids[msg.sender] == 0) {
+            bidders.push(msg.sender);
         }
 
-        winner = msg.sender;
-        highestBid = msg.value;
-        bidders.push(msg.sender);
+        bids[msg.sender] = msg.value;
+        lastBidder = msg.sender;
     }
 
     function endAuction() public onlyOwner {
@@ -42,7 +41,11 @@ contract Auction {
         payable(owner).transfer(address(this).balance);
     }
 
-    function getWinner() public view returns (address) {
-        return winner;
+    function getLastBidder() public view returns (address) {
+        return lastBidder;
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
     }
 }

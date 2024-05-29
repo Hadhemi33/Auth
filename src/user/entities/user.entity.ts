@@ -87,4 +87,8 @@ export class User {
 
   @Column({ nullable: true })
   resetPasswordTokenExpiry: Date;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  address: string;
 }

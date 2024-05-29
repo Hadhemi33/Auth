@@ -14,6 +14,8 @@ import { ethers } from 'ethers';
 export class SpecialProductPriceService {
   private provider: ethers.JsonRpcProvider;
   private contract: ethers.Contract;
+  private auctionAddress: string;
+  private abi: any;
   constructor(
     @InjectRepository(SpecialProductPrice)
     private specialProductPriceRepository: Repository<SpecialProductPrice>,
@@ -27,7 +29,7 @@ export class SpecialProductPriceService {
     this.provider = new ethers.JsonRpcProvider(
       'https://sepolia.infura.io/v3/cf8c01ab331948e4b5df67110ae6d7a1',
     );
-    const auctionAddress = '0x682E42bf7A6436DF33a5e2B0f93e9A31e81183A7';
+    const auctionAddress = '0xa82031fec916EE1616e83eaeA9E5bDB57954F1EF';
     const signer = new ethers.Wallet(
       'dfe47c099fffd0458fc770a60b54da8ae9bdeff3832995db87822171dbd9f973',
       this.provider,
@@ -71,6 +73,25 @@ export class SpecialProductPriceService {
         type: 'function',
       },
       {
+        inputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
+          },
+        ],
+        name: 'bids',
+        outputs: [
+          {
+            internalType: 'uint256',
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
         inputs: [],
         name: 'endAuction',
         outputs: [],
@@ -105,7 +126,7 @@ export class SpecialProductPriceService {
       },
       {
         inputs: [],
-        name: 'getWinner',
+        name: 'getLastBidder',
         outputs: [
           {
             internalType: 'address',
@@ -118,12 +139,25 @@ export class SpecialProductPriceService {
       },
       {
         inputs: [],
-        name: 'highestBid',
+        name: 'getOwner',
         outputs: [
           {
-            internalType: 'uint256',
+            internalType: 'address',
             name: '',
-            type: 'uint256',
+            type: 'address',
+          },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        inputs: [],
+        name: 'lastBidder',
+        outputs: [
+          {
+            internalType: 'address',
+            name: '',
+            type: 'address',
           },
         ],
         stateMutability: 'view',
@@ -132,19 +166,6 @@ export class SpecialProductPriceService {
       {
         inputs: [],
         name: 'owner',
-        outputs: [
-          {
-            internalType: 'address',
-            name: '',
-            type: 'address',
-          },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-      },
-      {
-        inputs: [],
-        name: 'winner',
         outputs: [
           {
             internalType: 'address',
@@ -169,7 +190,7 @@ export class SpecialProductPriceService {
           specialProduct: { id: specialProductId },
           // price: currentPrice.toString(),
         },
-        relations: ['user'],
+        relations: ['user', 'specialProduct'],
       });
 
       console.log('Higher Bids:', higherBids);
@@ -208,6 +229,7 @@ export class SpecialProductPriceService {
     // const price = parseFloat(specialProduct.price);
     const enteredPrice = ethers.parseEther(specialProduct.price);
     const discount = parseFloat(specialProduct.discount);
+    const owner = specialProduct.user;
 
     // let minimumPrice = price;
     // if (!isNaN(discount)) {
@@ -270,7 +292,10 @@ export class SpecialProductPriceService {
   }
 
   async getWinner(): Promise<string> {
-    return this.contract.getWinner();
+    return this.contract.getLastBidder();
+  }
+  async getOwner(): Promise<string> {
+    return this.contract.getOwner();
   }
   async getLastBidBySpecialProductId(
     specialProductId: string,
@@ -293,6 +318,7 @@ export class SpecialProductPriceService {
     specialProductId: string,
   ): Promise<SpecialProductPrice[]> {
     return this.specialProductPriceRepository.find({
+      relations: ['user'],
       where: { specialProduct: { id: specialProductId } },
     });
   }

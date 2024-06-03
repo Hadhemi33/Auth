@@ -140,6 +140,7 @@ type Query {
   AllspecialProductPrices: [SpecialProductPrice!]!
   getWinner: String!
   getOwner: String!
+  getOwnerByProductId(productId: String!): String!
   getAllOrderHistory: [OrderHistory!]!
   getNotifications: [Notification!]!
 }
@@ -181,7 +182,7 @@ type Mutation {
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-05-29T21:38:44.767Z"
+  createdAt: String! = "2024-06-03T22:24:55.457Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -234,7 +235,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-05-29T21:38:45.331Z"
+  createdAt: String! = "2024-06-03T22:24:56.320Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -246,7 +247,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-05-29T21:38:45.331Z"
+  createdAt: String = "2024-06-03T22:24:56.320Z"
   discount: String!
   endingIn: String
   categoryId: String

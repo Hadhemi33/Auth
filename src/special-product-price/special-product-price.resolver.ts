@@ -97,4 +97,18 @@ export class SpecialProductPriceResolver {
   async getOwner(): Promise<string> {
     return this.specialProductPriceService.getOwner();
   }
+  @Query(() => String)
+  async getOwnerByProductId(
+    @Args('productId') productId: string,
+  ): Promise<string> {
+    try {
+      const owner = await this.specialProductPriceService.getOwnerByProductId(
+        productId.toString(),
+      );
+      return owner;
+    } catch (error) {
+      console.error('Error fetching owner by product ID:', error);
+      throw new Error('Failed to fetch owner by product ID');
+    }
+  }
 }

@@ -38,8 +38,8 @@
       ]
     },
     "E:\\PFE\\BidFlick\\Auth\\contracts\\Auction.sol": {
-      "lastModificationDate": 1716975347566,
-      "contentHash": "1d1736247305168d388cf6f5676dab38",
+      "lastModificationDate": 1717453443365,
+      "contentHash": "84860b80ae863ad4e021e1a4c2dcf112",
       "sourceName": "contracts/Auction.sol",
       "solcConfig": {
         "version": "0.8.24",

@@ -7,7 +7,6 @@ contract Auction {
     address[] public bidders;
     uint public endTime;
     bool public ended;
-
     address public lastBidder;
 
     constructor(uint _biddingTime, address _owner) {
@@ -22,10 +21,16 @@ contract Auction {
 
     function bid() public payable {
         require(block.timestamp < endTime, "Auction has ended");
-        require(msg.value > bids[msg.sender], "Bid not enough");
+        // require(msg.value > bids[msg.sender], "Bid not enough");
 
         if (bids[msg.sender] == 0) {
             bidders.push(msg.sender);
+        } else {
+            payable(msg.sender).transfer(bids[msg.sender]);
+        }
+
+        if (lastBidder != address(0)) {
+            payable(lastBidder).transfer(bids[lastBidder]);
         }
 
         bids[msg.sender] = msg.value;
@@ -38,7 +43,7 @@ contract Auction {
         require(bidders.length > 0, "No one participated!");
 
         ended = true;
-        payable(owner).transfer(address(this).balance);
+      payable(owner).transfer(bids[lastBidder]);
     }
 
     function getLastBidder() public view returns (address) {

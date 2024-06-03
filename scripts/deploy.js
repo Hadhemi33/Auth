@@ -6,11 +6,14 @@ async function main() {
 
   // Specify the bidding time for the auction (e.g., 24 hours)
   const biddingTime = 60 * 60 * 24;
+  // Specify the owner of the auction
+  const owner = deployer.address;
+  // const owner = await getOwnerByProductId(productId);
   // Get the ContractFactory of your Contract
   const Auction = await hre.ethers.getContractFactory('Auction');
 
   // Deploy the contract with the required argument
-  const auction = await Auction.deploy(biddingTime);
+  const auction = await Auction.deploy(biddingTime, owner);
 
   // Wait for the deployment transaction to be mined
   const dep = await auction.waitForDeployment();

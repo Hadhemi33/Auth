@@ -27,13 +27,16 @@ export class SpecialProductPriceService {
   ) {
     // Initialize ethers provider and contract
     this.provider = new ethers.JsonRpcProvider(
-      'https://sepolia.infura.io/v3/cf8c01ab331948e4b5df67110ae6d7a1',
+      'https://sepolia.infura.io/v3/65865959f822477dbb336a8a1dcbabc7',
     );
-    const auctionAddress = '0xa82031fec916EE1616e83eaeA9E5bDB57954F1EF';
+    const auctionAddress = '0xBAa778F00F6F3989D2fa9eD3DF88fBC6ea24BaD2';
     const signer = new ethers.Wallet(
-      'dfe47c099fffd0458fc770a60b54da8ae9bdeff3832995db87822171dbd9f973',
+      '36ac4fc0106f2781a981910e6576a62bab834480c2aba231758128ed400decbc',
       this.provider,
     );
+    const senderPrivateKey =
+      '36ac4fc0106f2781a981910e6576a62bab834480c2aba231758128ed400decbc';
+    const senderWallet = new ethers.Wallet(senderPrivateKey, this.provider);
     const abi = [
       {
         inputs: [
@@ -41,6 +44,11 @@ export class SpecialProductPriceService {
             internalType: 'uint256',
             name: '_biddingTime',
             type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: '_owner',
+            type: 'address',
           },
         ],
         stateMutability: 'nonpayable',
@@ -179,6 +187,29 @@ export class SpecialProductPriceService {
     ];
     this.contract = new ethers.Contract(auctionAddress, abi, signer);
   }
+  async findBySpecialProductId(
+    specialProductId: string,
+  ): Promise<SpecialProductPrice[]> {
+    return this.specialProductPriceRepository.find({
+      relations: ['user'],
+      where: { specialProduct: { id: specialProductId } },
+    });
+  }
+  async getOwnerByProductId(productId: string): Promise<string> {
+    try {
+      const specialProduct = await this.specialProductRepository.findOne({
+        where: { id: productId },
+        relations: ['user'],
+      });
+
+      const owner = specialProduct.user.address;
+
+      return owner;
+    } catch (error) {
+      console.error('Error fetching owner by product ID:', error);
+      throw new Error('Failed to fetch owner by product ID');
+    }
+  }
 
   async getHigherBids(
     specialProductId: string,
@@ -228,8 +259,8 @@ export class SpecialProductPriceService {
     }
     // const price = parseFloat(specialProduct.price);
     const enteredPrice = ethers.parseEther(specialProduct.price);
-    const discount = parseFloat(specialProduct.discount);
-    const owner = specialProduct.user;
+    // const discount = parseFloat(specialProduct.discount);
+    // const owner = specialProduct.user;
 
     // let minimumPrice = price;
     // if (!isNaN(discount)) {
@@ -241,6 +272,8 @@ export class SpecialProductPriceService {
       specialProduct.id,
       // enteredPrice,
     );
+    // Check the balance of the bidder
+
     // Place bid on the smart contract
     const tx = await this.contract.bid({ value: enteredPrice });
     await tx.wait();
@@ -297,6 +330,7 @@ export class SpecialProductPriceService {
   async getOwner(): Promise<string> {
     return this.contract.getOwner();
   }
+
   async getLastBidBySpecialProductId(
     specialProductId: string,
   ): Promise<SpecialProductPrice | null> {
@@ -314,14 +348,6 @@ export class SpecialProductPriceService {
     return this.specialProductPriceRepository.findOne({ where: { id } });
   }
 
-  async findBySpecialProductId(
-    specialProductId: string,
-  ): Promise<SpecialProductPrice[]> {
-    return this.specialProductPriceRepository.find({
-      relations: ['user'],
-      where: { specialProduct: { id: specialProductId } },
-    });
-  }
   async findAll(): Promise<SpecialProductPrice[]> {
     return this.specialProductPriceRepository.find({
       relations: ['user', 'specialProduct'],

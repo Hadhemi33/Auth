@@ -31,11 +31,8 @@ contract Auction {
             
             bidders.push(msg.sender);
             
-        } else {
-            uint lastBidAmount = bids[last];
-            payable(last).transfer(address(this).balance);
-        }
-   bids[msg.sender] += msg.value;
+        } 
+        bids[msg.sender] += msg.value;
         lastBidder = msg.sender;
 
         emit NewBid(lastBidder, msg.value);
@@ -59,7 +56,7 @@ contract Auction {
     function getOwner() public view returns (address) {
         return owner;
     }
-      function getLast() public view returns (address) {
-        return last;
+      function getLast() public view returns (uint) {
+        return address(this).balance;
     }
 }

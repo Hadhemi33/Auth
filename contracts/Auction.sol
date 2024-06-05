@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
-
 contract Auction {
     address public owner;
     mapping(address => uint) public bids;
@@ -8,6 +7,9 @@ contract Auction {
     uint public endTime;
     bool public ended;
     address public lastBidder;
+
+    event NewBid(address indexed bidder, uint amount);
+    event AuctionEnded(address winner, uint amount);
 
     constructor(uint _biddingTime, address _owner) {
         owner = _owner;
@@ -19,22 +21,28 @@ contract Auction {
         _;
     }
 
-    function bid() public payable {
+    function bid() public payable  {
         require(block.timestamp < endTime, "Auction has ended");
-        // require(msg.value > bids[msg.sender], "Bid not enough");
 
         if (bids[msg.sender] == 0) {
             bidders.push(msg.sender);
         } else {
+          
+
+            // Refund the previous bid to the bidder
             payable(msg.sender).transfer(bids[msg.sender]);
         }
 
         if (lastBidder != address(0)) {
-            payable(lastBidder).transfer(bids[lastBidder]);
+            // Refund the last highest bid to the lastBidder
+             payable(lastBidder).transfer(bids[lastBidder]);
         }
 
-        bids[msg.sender] = msg.value;
-        lastBidder = msg.sender;
+        bids[msg.sender] = msg.value;// Update the bid amount for the bidder
+        lastBidder = msg.sender;// Update the last bidder
+
+        
+        emit NewBid(msg.sender, msg.value);
     }
 
     function endAuction() public onlyOwner {
@@ -43,7 +51,16 @@ contract Auction {
         require(bidders.length > 0, "No one participated!");
 
         ended = true;
-      payable(owner).transfer(bids[lastBidder]);
+        
+        // Notify the backend server to transfer the funds to the owner
+        // This would be a call to the server
+        // Transfer the highest bid amount to the owner
+         payable(owner).transfer(bids[lastBidder]);
+        emit AuctionEnded(lastBidder, bids[lastBidder]);
+    }
+
+    function getBidders() public view returns (address[] memory) {
+        return bidders;
     }
 
     function getLastBidder() public view returns (address) {

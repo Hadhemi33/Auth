@@ -56,7 +56,10 @@ contract Auction {
     function getOwner() public view returns (address) {
         return owner;
     }
-      function getLast() public view returns (uint) {
-        return address(this).balance;
+      function getLast() public view returns (address) {
+        return  last;
     }
+      function getBounce() public view returns (uint) {
+        return address(this).balance;
+    } 
 }

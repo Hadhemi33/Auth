@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { SpecialProductPriceService } from './special-product-price.service';
 import { SpecialProductPrice } from './entities/special-product-price.entity';
 import { CreateSpecialProductPriceInput } from './dto/create-special-product-price.input';
@@ -10,6 +10,7 @@ import { CurrentUser } from 'src/auth/get-current-user.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SpecialProduct } from 'src/special-product/entities/special-product.entity';
 import { Repository } from 'typeorm';
+
 @Resolver(() => SpecialProductPrice)
 export class SpecialProductPriceResolver {
   constructor(
@@ -17,6 +18,7 @@ export class SpecialProductPriceResolver {
     @InjectRepository(SpecialProduct)
     private specialProductRepository: Repository<SpecialProduct>,
   ) {}
+
   @Mutation(() => SpecialProductPrice)
   @UseGuards(JwtAuthGuard)
   async createSpecialProductPrice(
@@ -28,12 +30,15 @@ export class SpecialProductPriceResolver {
       where: { id: createSpecialProductPriceInput.specialProductId },
     });
 
+    if (!specialProduct) {
+      return new Error('Special product not found.');
+    }
+
     const enteredPrice = parseFloat(createSpecialProductPriceInput.price);
     const actualPrice = parseFloat(specialProduct.price);
     const discountPrice =
       actualPrice - (parseFloat(specialProduct.discount) / 100) * actualPrice;
-
-    const futurPrice =
+    const futurePrice =
       actualPrice + (parseFloat(specialProduct.discount) / 100) * actualPrice;
 
     if (enteredPrice < discountPrice) {
@@ -41,9 +46,9 @@ export class SpecialProductPriceResolver {
         `Sorry, you cannot buy this product at a price lower than ${discountPrice}`,
       );
     }
-    if (enteredPrice <= futurPrice) {
+    if (enteredPrice <= futurePrice) {
       return new Error(
-        `Sorry, you cannot buy this product at a price lower than ${futurPrice}`,
+        `Sorry, you cannot buy this product at a price lower than ${futurePrice}`,
       );
     }
     return this.specialProductPriceService.placeBid(
@@ -56,47 +61,45 @@ export class SpecialProductPriceResolver {
   async updateSpecialProductPrice(
     @Args('updateSpecialProductPriceInput')
     updateSpecialProductPriceInput: UpdateSpecialProductPriceInput,
-  ) {
+  ): Promise<SpecialProductPrice> {
     return this.specialProductPriceService.update(
       updateSpecialProductPriceInput,
     );
   }
+
   @Query(() => [SpecialProductPrice])
   async specialProductPrices(
     @Args('specialProductId') specialProductId: string,
-  ) {
+  ): Promise<SpecialProductPrice[]> {
     return this.specialProductPriceService.findBySpecialProductId(
       specialProductId,
     );
   }
-  @Query(() => SpecialProductPrice)
-  async getHigherBids(@Args('specialProductId') specialProductId: string) {
+
+  @Query(() => [SpecialProductPrice])
+  async getHigherBids(
+    @Args('specialProductId') specialProductId: string,
+  ): Promise<SpecialProductPrice[]> {
     return this.specialProductPriceService.getHigherBids(specialProductId);
   }
 
   @Query(() => [SpecialProductPrice])
-  async AllspecialProductPrices() {
+  async allSpecialProductPrices(): Promise<SpecialProductPrice[]> {
     return this.specialProductPriceService.findAll();
   }
+
   @Mutation(() => String)
   async deleteAllSpecialProductPrices(): Promise<string> {
     await this.specialProductPriceService.deleteAll();
     return 'All special product prices deleted successfully';
   }
+
   @Mutation(() => String)
   async endAuction(): Promise<string> {
     await this.specialProductPriceService.endAuction();
     return 'Auction ended successfully';
   }
 
-  @Query(() => String)
-  async getWinner(): Promise<string> {
-    return this.specialProductPriceService.getWinner();
-  }
-  @Query(() => String)
-  async getOwner(): Promise<string> {
-    return this.specialProductPriceService.getOwner();
-  }
   @Query(() => String)
   async getOwnerByProductId(
     @Args('productId') productId: string,

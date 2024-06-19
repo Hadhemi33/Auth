@@ -79,7 +79,7 @@ export class UserResolver {
     return this.usersService.getAuthUser(user);
   }
   @Query(() => [User])
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(J wtAuthGuard)
   // @SetMetadata('roles', ['admin'])
   async getAllUsers(): Promise<User[]> {
     return this.usersService.getAllUsers();

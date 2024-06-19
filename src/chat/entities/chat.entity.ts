@@ -1,5 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 @ObjectType('Chat')
 export class Chat {
@@ -7,19 +14,12 @@ export class Chat {
   @Field(() => ID)
   id: string;
 
-  @Field()
   @Column()
-  senderId: string;
-
   @Field()
-  @Column()
-  receiverId: string;
+  name: string;
 
-  @Field()
-  @Column()
-  content: string;
-
-  @Field()
-  @Column({ default: () => 'CURRENT_TIMESTAMP' })
-  timestamp: Date;
+  @ManyToMany(() => User, (user) => user.chats)
+  @JoinTable()
+  @Field(() => [User])
+  members: User[];
 }

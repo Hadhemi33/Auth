@@ -91,4 +91,7 @@ export class User {
   @Column({ nullable: true })
   @Field({ nullable: true })
   address: string;
+  @ManyToMany(() => Chat, (chat) => chat.members)
+  @Field(() => [Chat], { nullable: true })
+  chats: Chat[];
 }

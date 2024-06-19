@@ -1,23 +1,25 @@
-// import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-// import { ChatService } from './chat.service';
-// import { Chat } from './entities/chat.entity';
-// import { CreateChatInput } from './dto/create-chat.input';
-// import { UpdateChatInput } from './dto/update-chat.input';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { ChatService } from './chat.service';
+import { Chat } from './entities/chat.entity';
+import { UserService } from 'src/user/user.service';
 
-// @Resolver(() => Chat)
-// export class ChatResolver {
-//   constructor(private  messageService: ChatService) {}
+@Resolver(() => Chat)
+export class ChatResolver {
+  constructor(
+    private chatService: ChatService,
+    private userService: UserService,
+  ) {}
 
-//   @Mutation(() => Chat)
-//   async sendMessage(
-//     @Args('senderId') senderId: string,
-//     @Args('input') input: CreateChatInput,
-//   ): Promise<Chat> {
-//     return await this.messageService.sendMessage(senderId, input);
-//   }
+  @Mutation(() => Chat)
+  async createChat(
+    @Args('name') name: string,
+    @Args('memberIds', { type: () => [String] }) memberIds: string[],
+  ): Promise<Chat> {
+    return this.chatService.createChat(name, memberIds);
+  }
 
-//   @Query(() => [Chat])
-//   async getMessages(@Args('receiverId') receiverId: string): Promise<Chat[]> {
-//     return await this.messageService.getMessages(receiverId);
-//   }
-// }
+  @Query(() => Chat)
+  async getChat(@Args('id') id: string): Promise<Chat> {
+    return this.chatService.getChat(id);
+  }
+}

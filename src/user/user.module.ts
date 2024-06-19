@@ -19,11 +19,13 @@ import { OrderHistory } from 'src/order-history/entities/order-history.entity';
 import { OrderHistoryService } from 'src/order-history/order-history.service';
 import { PaymentService } from 'src/payment/payment.service';
 import { Payment } from 'src/payment/entities/payment.entity';
+import { Chat } from 'src/chat/entities/chat.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
+      // Chat,
       Category,
       Order,
       Product,

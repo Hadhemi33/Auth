@@ -29,15 +29,13 @@ export class SpecialProductPriceService {
     this.provider = new ethers.JsonRpcProvider(
       'https://sepolia.infura.io/v3/65865959f822477dbb336a8a1dcbabc7',
     );
-    // this.provider = new ethers.JsonRpcProvider();
-    const auctionAddress = '0x3C4C7B473580Ae38E163Ec7bbd3802F4817bdb96';
+
+    this.auctionAddress = '0x269144a92442b4e4Cf0Ec70229e8c6FC7d4E8eed';
     const signer = new ethers.Wallet(
       'b1c06abe8c2dc4a273a88c95a90808cd3370d42ee43ac8c4a4f3c9cfc879505f',
       this.provider,
     );
-    const senderPrivateKey =
-      '36ac4fc0106f2781a981910e6576a62bab834480c2aba231758128ed400decbc';
-    const senderWallet = new ethers.Wallet(senderPrivateKey, this.provider);
+
     const abi = [
       {
         inputs: [
@@ -276,7 +274,7 @@ export class SpecialProductPriceService {
         type: 'function',
       },
     ];
-    this.contract = new ethers.Contract(auctionAddress, abi, signer);
+    this.contract = new ethers.Contract(this.auctionAddress, abi, signer);
   }
   async findBySpecialProductId(
     specialProductId: string,
@@ -351,7 +349,7 @@ export class SpecialProductPriceService {
     }
     // const price = parseFloat(specialProduct.price);
 
-    const enteredPrice = ethers.parseUnits(
+    const enteredPrice = ethers.parseEther(
       createSpecialProductPriceInput.price,
     );
     console.log('enterprice', enteredPrice);

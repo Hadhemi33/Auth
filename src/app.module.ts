@@ -23,6 +23,7 @@ import { PaymentModule } from './payment/payment.module';
 import { PaymentService } from './payment/payment.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationModule } from './notification/notification.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -76,9 +77,9 @@ import { NotificationModule } from './notification/notification.module';
     PaymentModule,
     NotificationModule,
 
-    // ChatModule,
+    ChatModule,
 
-    // EventsModule,
+   
   ],
 
   controllers: [AppController],

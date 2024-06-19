@@ -47,6 +47,12 @@ type Category {
   specialProducts: [SpecialProduct!]!
 }
 
+type Chat {
+  id: ID!
+  name: String!
+  members: [User!]!
+}
+
 type OrderHistory {
   id: ID!
   totalPrice: String!
@@ -81,6 +87,7 @@ type User {
   likedSpecialProducts: [SpecialProduct!]
   specialProductPrices: [SpecialProductPrice!]!
   address: String
+  chats: [Chat!]
 }
 
 type Product {
@@ -141,6 +148,7 @@ type Query {
   getOwnerByProductId(productId: String!): String!
   getAllOrderHistory: [OrderHistory!]!
   getNotifications: [Notification!]!
+  getChat(id: String!): Chat!
 }
 
 type Mutation {
@@ -175,12 +183,13 @@ type Mutation {
   createPaymentIntent(orderId: ID!, amount: Float!, currency: String!): String!
   deleteAllNotification: String!
   deleteNotification(id: String!): String!
+  createChat(name: String!, memberIds: [String!]!): Chat!
 }
 
 input CreateProductInput {
   title: String!
   price: String!
-  createdAt: String! = "2024-06-06T11:15:43.191Z"
+  createdAt: String! = "2024-06-18T22:15:29.998Z"
   description: String!
   categoryId: String!
   imageUrl: String
@@ -233,7 +242,7 @@ input CreateSpecialProductInput {
   title: String!
   price: String!
   description: String!
-  createdAt: String! = "2024-06-06T11:15:43.996Z"
+  createdAt: String! = "2024-06-18T22:15:30.720Z"
   discount: String!
   endingIn: String!
   categoryId: String!
@@ -245,7 +254,7 @@ input UpdateSpecialProductInput {
   title: String
   price: String!
   description: String!
-  createdAt: String = "2024-06-06T11:15:43.996Z"
+  createdAt: String = "2024-06-18T22:15:30.720Z"
   discount: String!
   endingIn: String
   categoryId: String

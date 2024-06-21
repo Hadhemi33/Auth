@@ -441,7 +441,11 @@ export class SpecialProductService {
 
       const removedProductId = productFound.id;
 
-      if (user.roles === 'admin' || user.id === productFound.user.id) {
+      if (
+        user.roles === 'admin' ||
+        user.id === productFound.user.id ||
+        user.roles === 'subadmin'
+      ) {
         const result: SpecialProduct =
           await this.specialProductRepository.remove(productFound);
 
@@ -472,7 +476,7 @@ export class SpecialProductService {
 
       const removedProductId = productFound.id;
 
-      if (user.roles === 'admin') {
+      if (user.roles === 'admin' || user.roles === 'subadmin') {
         const result: SpecialProduct =
           await this.specialProductRepository.remove(productFound);
 

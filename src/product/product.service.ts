@@ -21,8 +21,6 @@ export class ProductService {
     private categoryService: CategoryService,
   ) {}
 
-
-
   async create(
     createProductInput: CreateProductInput,
     user: User,
@@ -110,26 +108,26 @@ export class ProductService {
 
       const removedProductId = productFound.id;
 
-      if (user.roles === 'admin' || user.id === productFound.user.id) {
+      if (
+        user.roles === 'admin' ||
+        user.id === productFound.user.id ||
+        user.roles === 'subadmin'
+      ) {
         const result: Product =
           await this.productRepository.remove(productFound);
-
 
         if (!result) {
           throw new NotFoundException(`Product with id ${id} not found`);
         }
 
-       
         result.id = removedProductId;
         return result;
       } else {
-  
         throw new UnauthorizedException(
           'You are not authorized to delete this product',
         );
       }
     } catch (error) {
-
       console.error('Error deleting product:', error);
       throw new InternalServerErrorException(
         'An error occurred while deleting the product.',
@@ -153,7 +151,7 @@ export class ProductService {
 
   ///////////////////////////UpdateProduct/////////////////////////
   async updateProductt(product: Product): Promise<Product> {
-    return this.productRepository.save(product); 
+    return this.productRepository.save(product);
   }
   async updateProduct(
     updateProductInput: UpdateProductInput,
@@ -199,12 +197,11 @@ export class ProductService {
 
   async deleteProductAdmin(id: string, user: User): Promise<Product> {
     try {
-    
       const productFound: Product = await this.getProductById(id);
 
       const removedProductId = productFound.id;
 
-      if (user.roles === 'admin') {
+      if (user.roles === 'admin' || 'subadmin') {
         const result: Product =
           await this.productRepository.remove(productFound);
 

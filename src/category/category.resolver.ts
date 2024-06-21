@@ -14,13 +14,13 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 @Resolver(() => Category)
 export class CategoryResolver {
   constructor(
-    private  categoryService: CategoryService,
-    private  userService: UserService,
+    private categoryService: CategoryService,
+    private userService: UserService,
   ) {}
 
   @Mutation(() => Category)
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @SetMetadata('roles', ['admin'])
+  @SetMetadata('roles', ['admin', 'subadmin'])
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
 
